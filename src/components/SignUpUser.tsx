@@ -6,10 +6,6 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { signupSchema } from "./validation/validation";
 
-interface Props {
-  onSubmit: (data: SignupFormData) => void;
-}
-
 type SignupFormData = z.infer<typeof signupSchema>;
 
 const SignUpUser = () => {
@@ -18,8 +14,7 @@ const SignUpUser = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<SignupFormData>({ resolver: zodResolver(signupSchema) });
-
-  const [users, setUsers] = useState([]);
+  
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -29,7 +24,7 @@ const SignUpUser = () => {
       .post("http://localhost:3000/user/", newUser)
       .then((res) => {
         console.log(res.data);
-        navigate("/login");
+        navigate("/");
       })
       .catch((err) => {
         setError(err.response.data.message);

@@ -20,6 +20,7 @@ function App() {
   });
   const [error, setError] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [refreshExpiredError, setRefreshExpiredError] = useState("");
 
   return (
     <>
@@ -33,6 +34,8 @@ function App() {
           setError,
           isLoggedIn,
           setIsLoggedIn,
+          refreshExpiredError,
+          setRefreshExpiredError,
         }}
       >
         {!isLoggedIn ? <LoginUser /> : <Profile />}

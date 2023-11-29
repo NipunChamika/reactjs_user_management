@@ -10,6 +10,8 @@ interface UserContextProps {
   setError: (error: string) => void;
   isLoggedIn: boolean;
   setIsLoggedIn: (isLoggedIn: boolean) => void;
+  refreshExpiredError: string;
+  setRefreshExpiredError: (refreshExpiredError: string) => void;
 }
 
 export const UserContext = createContext<UserContextProps | undefined>(

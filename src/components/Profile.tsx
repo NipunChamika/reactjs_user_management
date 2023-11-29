@@ -15,6 +15,8 @@ type UpdateFormData = z.infer<typeof updateUserSchema>;
 const Profile = ({}: Props) => {
   const navigate = useNavigate();
 
+  const [shouldRefetch, setShouldRefetch] = useState(false);
+
   const userContext = useContext(UserContext);
   // console.log(userContext);
 
@@ -54,7 +56,7 @@ const Profile = ({}: Props) => {
           setError("Something went wrong");
         }
       });
-  }, [accessToken, user]);
+  }, [accessToken, shouldRefetch]);
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
@@ -107,7 +109,7 @@ const Profile = ({}: Props) => {
       .patch("http://localhost:3000/user/" + userId, updatedData, config)
       .then((res) => {
         setUser(res.data.user);
-        // navigate("/profile");
+        setShouldRefetch(true);
         setUpdateUser(false);
       })
       .catch((err) => {
@@ -135,7 +137,10 @@ const Profile = ({}: Props) => {
           </div>
           <button
             className="btn btn-outline-primary me-2"
-            onClick={() => setUpdateUser(true)}
+            onClick={() => {
+              setUpdateUser(true);
+              setShouldRefetch(false);
+            }}
           >
             Update
           </button>

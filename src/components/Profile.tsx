@@ -25,7 +25,15 @@ const Profile = ({}: Props) => {
     return null;
   }
 
-  const { userId, setUser, setError, user, setIsLoggedIn } = userContext;
+  const {
+    userId,
+    setUser,
+    user,
+    setError,
+    error,
+    setIsLoggedIn,
+    setRefreshExpiredError,
+  } = userContext;
 
   const accessToken = localStorage.getItem("accessToken");
 
@@ -125,28 +133,61 @@ const Profile = ({}: Props) => {
       });
   };
 
+  const handleRefreshToken = () => {
+    const refreshToken = localStorage.getItem("refreshToken");
+
+    // console.log(refreshToken);
+
+    axios
+      .post("http://localhost:3000/user/token", { refreshToken: refreshToken })
+      .then((res) => console.log("New accessToken: ", res.data.accessToken))
+      .catch((err) => {
+        // console.log(err);
+        if (err.response.status === 401) {
+          setRefreshExpiredError("Session expired. Please log in again.");
+          handleLogout();
+        } else if (err.message === "Network Error") {
+          setError(err.message);
+        } else if (err.response) {
+          setError(err.response.data.message);
+        } else {
+          console.log("An unexpected error occured: ", err);
+          setError(err.message || "An unexpected error occured");
+        }
+      });
+  };
+
   return (
     <>
       <div className="bg-dark vh-100 d-flex justify-content-center align-items-center">
         <div className="bg-light p-3 w-25 vh-90 rounded shadow-sm overflow-auto">
+          {error && <p className="text-danger">{error}</p>}
           <h1 className="text-center mb-3">{`Welcome Back, ${user?.firstName}`}</h1>
           <h5>Profile Details</h5>
           <div>
             <p>Name: {user?.firstName + " " + user?.lastName}</p>
             <p>Email: {user?.email}</p>
           </div>
-          <button
-            className="btn btn-outline-primary me-2"
-            onClick={() => {
-              setUpdateUser(true);
-              setShouldRefetch(false);
-            }}
-          >
-            Update
-          </button>
-          <button className="btn btn-outline-danger" onClick={handleLogout}>
-            Logout
-          </button>
+          <div className="d-flex">
+            <button
+              className="btn btn-outline-primary me-2"
+              onClick={() => {
+                setUpdateUser(true);
+                setShouldRefetch(false);
+              }}
+            >
+              Update
+            </button>
+            <button className="btn btn-outline-danger" onClick={handleLogout}>
+              Logout
+            </button>
+            <button
+              className="btn btn-primary ms-auto"
+              onClick={handleRefreshToken}
+            >
+              Refresh Token
+            </button>
+          </div>
 
           {/* =========================================================================== */}
 

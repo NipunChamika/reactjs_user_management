@@ -23,15 +23,22 @@ const LoginUser = ({}: Props) => {
     return null;
   }
 
-  const { setUserId, setIsLoggedIn, setError, error } = userContext;
+  const {
+    setUserId,
+    setIsLoggedIn,
+    setError,
+    error,
+    refreshExpiredError,
+    setRefreshExpiredError,
+  } = userContext;
+
+  const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormData>({ resolver: zodResolver(loginSchema) });
-
-  const navigate = useNavigate();
 
   const onSubmit = (data: LoginFormData) => {
     axios
@@ -42,6 +49,8 @@ const LoginUser = ({}: Props) => {
         localStorage.setItem("accessToken", res.data.accessToken);
         localStorage.setItem("refreshToken", res.data.refreshToken);
         setUserId(res.data.user.id);
+        setRefreshExpiredError("");
+        setError("");
         setIsLoggedIn(true);
         // navigate("/profile");
       })
@@ -62,6 +71,9 @@ const LoginUser = ({}: Props) => {
     <>
       <div className="bg-dark vh-100 d-flex justify-content-center align-items-center">
         <div className="shadow-sm bg-light bg-gradient p-3 w-25 rounded">
+          {refreshExpiredError && (
+            <p className="text-danger">{refreshExpiredError}</p>
+          )}
           {error && <p className="text-danger">{error}</p>}
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mb-3">

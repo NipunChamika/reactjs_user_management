@@ -6,6 +6,7 @@ import { loginSchema } from "./validation/validation";
 import axios from "axios";
 import { useContext } from "react";
 import { UserContext } from "../context";
+import ResetPassword from "./ResetPassword";
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
@@ -114,6 +115,7 @@ const LoginUser = ({}: Props) => {
           >
             Register
           </button>
+          <ResetPassword />
         </div>
       </div>
     </>

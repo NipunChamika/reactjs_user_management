@@ -98,6 +98,8 @@ const Profile = ({}: Props) => {
 
   const [updateUser, setUpdateUser] = useState(false);
 
+  const [updateError, setUpdateError] = useState("");
+
   const {
     register,
     handleSubmit,
@@ -112,6 +114,11 @@ const Profile = ({}: Props) => {
     const updatedData = Object.fromEntries(
       Object.entries(data).filter(([_, value]) => value !== "")
     );
+
+    if (Object.keys(updatedData).length === 0) {
+      setUpdateError("Please fill in at least one field to update.");
+      return;
+    }
 
     axios
       .patch("http://localhost:3000/user/" + userId, updatedData, config)
@@ -194,6 +201,7 @@ const Profile = ({}: Props) => {
           {updateUser && (
             <div>
               <br />
+              {updateError && <p className="text-danger">{updateError}</p>}
               <h1 className="text-center mb-3">User Update</h1>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="mb-3">
@@ -264,7 +272,10 @@ const Profile = ({}: Props) => {
                 </button>
                 <button
                   className="btn btn-outline-secondary"
-                  onClick={() => setUpdateUser(false)}
+                  onClick={() => {
+                    setUpdateUser(false);
+                    setUpdateError("");
+                  }}
                 >
                   Cancel
                 </button>

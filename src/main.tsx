@@ -8,6 +8,7 @@ import Profile from "./components/Profile.tsx";
 import LoginUser from "./components/LoginUser.tsx";
 import SignUpUser from "./components/SignUpUser.tsx";
 import EmailEntryPage from "./components/EmailEntryPage.tsx";
+import PasswordResetPage from "./components/PasswordResetPage.tsx";
 // import Update from "./components/Update.tsx";
 
 const router = createBrowserRouter([
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
   {
     path: "/email",
     element: <EmailEntryPage />,
+  },
+  {
+    path: "/password-reset",
+    element: <PasswordResetPage />,
   },
 ]);
 

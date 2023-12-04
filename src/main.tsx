@@ -7,6 +7,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import Profile from "./components/Profile.tsx";
 import LoginUser from "./components/LoginUser.tsx";
 import SignUpUser from "./components/SignUpUser.tsx";
+import EmailEntryPage from "./components/EmailEntryPage.tsx";
 // import Update from "./components/Update.tsx";
 
 const router = createBrowserRouter([
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
   {
     path: "/profile",
     element: <Profile />,
+  },
+  {
+    path: "/email",
+    element: <EmailEntryPage />,
   },
 ]);
 

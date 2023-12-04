@@ -1,7 +1,8 @@
 import { useContext } from "react";
 import { UserContext } from "../context";
+import { Link } from "react-router-dom";
 
-const ResetPassword = () => {
+const ForgotPasswordLink = () => {
   const userContext = useContext(UserContext);
 
   if (userContext === undefined) {
@@ -14,12 +15,12 @@ const ResetPassword = () => {
   return (
     <>
       <div className="d-flex">
-        <p className="ms-auto px-0 link-underline-secondary pt-2">
-          <u>Forgot your password?</u>
-        </p>
+        <Link to="/email" className="ms-auto px-0 pt-2">
+          Forgot password?
+        </Link>
       </div>
     </>
   );
 };
 
-export default ResetPassword;
+export default ForgotPasswordLink;

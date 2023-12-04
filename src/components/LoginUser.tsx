@@ -53,7 +53,7 @@ const LoginUser = ({}: Props) => {
         setRefreshExpiredError("");
         setError("");
         setIsLoggedIn(true);
-        // navigate("/profile");
+        navigate("/profile");
       })
       .catch((err) => {
         console.log(err);

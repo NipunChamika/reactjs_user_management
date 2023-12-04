@@ -4,10 +4,21 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "../context";
 
 type EmailEntryFormData = z.infer<typeof emailSchema>;
 
 const EmailEntryPage = () => {
+  const userContext = useContext(UserContext);
+
+  if (userContext === undefined) {
+    console.log("UserContext not available.");
+    return null;
+  }
+
+  const { setEmail } = userContext;
+
   const {
     register,
     handleSubmit,
@@ -17,11 +28,12 @@ const EmailEntryPage = () => {
   const navigate = useNavigate();
 
   const onSubmit = (data: EmailEntryFormData) => {
-    console.log(data);
+    // console.log(data.email);
 
     axios
       .post("http://localhost:3000/user/forgot-password", data)
       .then((res) => {
+        setEmail(data.email);
         console.log(res.data);
         navigate("/password-reset");
       })
@@ -34,7 +46,7 @@ const EmailEntryPage = () => {
     <>
       <div className="bg-dark vh-100 d-flex justify-content-center align-items-center">
         <div className="shadow-sm bg-light bg-gradient p-3 w-25 rounded">
-          <h3 className="mb-2">Reset Password</h3>
+          <h3 className="mb-2">Email Verification</h3>
           <p className="mb-3">
             Reset your password by providing your account email below.
           </p>

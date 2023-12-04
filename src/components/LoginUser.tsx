@@ -6,6 +6,7 @@ import { loginSchema } from "./validation/validation";
 import axios from "axios";
 import { useContext } from "react";
 import { UserContext } from "../context";
+import ForgotPasswordLink from "./ForgotPasswordLink";
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
@@ -52,7 +53,7 @@ const LoginUser = ({}: Props) => {
         setRefreshExpiredError("");
         setError("");
         setIsLoggedIn(true);
-        // navigate("/profile");
+        navigate("/profile");
       })
       .catch((err) => {
         console.log(err);
@@ -114,6 +115,7 @@ const LoginUser = ({}: Props) => {
           >
             Register
           </button>
+          <ForgotPasswordLink />
         </div>
       </div>
     </>

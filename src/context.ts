@@ -12,6 +12,8 @@ interface UserContextProps {
   setIsLoggedIn: (isLoggedIn: boolean) => void;
   refreshExpiredError: string;
   setRefreshExpiredError: (refreshExpiredError: string) => void;
+  email: string;
+  setEmail: (email: string) => void;
 }
 
 export const UserContext = createContext<UserContextProps | undefined>(

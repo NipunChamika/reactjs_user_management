@@ -48,3 +48,21 @@ export const updateUserSchema = z.object({
       message: "Password must be at least 8 characters long",
     }),
 });
+
+export const emailSchema = z.object({
+  email: z
+    .string()
+    .min(1, { message: "Email is required" })
+    .email({ message: "Invalid email address" }),
+});
+
+export const passwordResetSchema = z.object({
+  otp: z
+    .string()
+    .min(1, { message: "OTP is required" })
+    .min(2, { message: "OTP must be of 4 digits" }),
+  newPassword: z
+    .string()
+    .min(1, { message: "Password is required" })
+    .min(8, { message: "Password must be at least 8 characters long" }),
+});

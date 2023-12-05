@@ -18,7 +18,8 @@ const PasswordResetPage = () => {
     return null;
   }
 
-  const { email, setEmail, error, setError } = userContext;
+  const { email, setEmail, error, setError, setRefreshExpiredError } =
+    userContext;
 
   const {
     register,
@@ -44,6 +45,7 @@ const PasswordResetPage = () => {
         console.log(res.data);
         setEmail("");
         setError("");
+        setRefreshExpiredError("");
         navigate("/");
       })
       .catch((err) => {

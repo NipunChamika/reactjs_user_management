@@ -17,7 +17,7 @@ const EmailEntryPage = () => {
     return null;
   }
 
-  const { setEmail } = userContext;
+  const { setEmail, setError, error } = userContext;
 
   const {
     register,
@@ -39,6 +39,9 @@ const EmailEntryPage = () => {
       })
       .catch((err) => {
         console.log(err);
+        if (err.response.status === 404) {
+          setError("User with the email not found");
+        }
       });
   };
 
@@ -46,6 +49,7 @@ const EmailEntryPage = () => {
     <>
       <div className="bg-dark vh-100 d-flex justify-content-center align-items-center">
         <div className="shadow-sm bg-light bg-gradient p-3 w-25 rounded">
+          {error && <p className="text-danger">{error}</p>}
           <h3 className="mb-2">Email Verification</h3>
           <p className="mb-3">
             Reset your password by providing your account email below.

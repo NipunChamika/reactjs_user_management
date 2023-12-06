@@ -35,6 +35,7 @@ const EmailEntryPage = () => {
       .then((res) => {
         setEmail(data.email);
         console.log(res.data);
+        setError("");
         navigate("/password-reset");
       })
       .catch((err) => {

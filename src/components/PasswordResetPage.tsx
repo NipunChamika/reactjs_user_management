@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context";
 import { passwordResetSchema } from "./validation/validation";
 import { z } from "zod";
@@ -31,19 +31,36 @@ const PasswordResetPage = () => {
 
   const navigate = useNavigate();
 
+  const [timer, setTimer] = useState(60);
+
+  const [showResend, setShowResend] = useState(false);
+
+  const [resendSuccess, setResendSuccess] = useState("");
+
+  useEffect(() => {
+    if (timer > 0) {
+      const interval = setInterval(() => {
+        setTimer((prevTimer) => prevTimer - 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    } else {
+      setShowResend(true);
+    }
+  }, [timer]);
+
   const onSubmit = (data: PasswordResetFormData) => {
     const payload = {
       ...data,
-      email: email,
+      email: email.email,
     };
 
-    // console.log(payload);
+    setResendSuccess("");
 
     axios
       .post("http://localhost:3000/user/reset-password", payload)
       .then((res) => {
         console.log(res.data);
-        setEmail("");
+        setEmail({ email: "" });
         setError("");
         setRefreshExpiredError("");
         navigate("/");
@@ -63,14 +80,34 @@ const PasswordResetPage = () => {
       });
   };
 
+  const handleResend = () => {
+    axios
+      .post("http://localhost:3000/user/forgot-password", email)
+      .then((res) => {
+        setEmail(email);
+        setShowResend(false);
+        setTimer(60);
+        setError("");
+        setResendSuccess("A new OTP has been sent to your email");
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err.response.status === 404) {
+          setError("User with the email not found");
+        }
+      });
+  };
+
   return (
     <>
       <div className="bg-dark vh-100 d-flex justify-content-center align-items-center">
         <div className="shadow-sm bg-light bg-gradient p-3 w-25 rounded">
           {error && <p className="text-danger">{error}</p>}
+          {resendSuccess && <p className="text-success">{resendSuccess}</p>}
           <h3 className="mb-2">Reset Password</h3>
           <p>
-            We have sent a code to <strong>{email}</strong>
+            We have sent a code to <strong>{email.email}</strong>
           </p>
           <div>
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -105,6 +142,20 @@ const PasswordResetPage = () => {
                 Reset
               </button>
             </form>
+            <div className="mt-3 d-flex align-items-baseline">
+              <span>Didn't receive the code?&nbsp;</span>
+              {showResend ? (
+                <div
+                  onClick={handleResend}
+                  role="button"
+                  className="cursor-pointer text-decoration-underline text-primary"
+                >
+                  Resend OTP
+                </div>
+              ) : (
+                <div>Resend OTP in {timer}s</div>
+              )}
+            </div>
           </div>
         </div>
       </div>

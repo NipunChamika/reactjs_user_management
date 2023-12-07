@@ -33,7 +33,7 @@ const EmailEntryPage = () => {
     axios
       .post("http://localhost:3000/user/forgot-password", data)
       .then((res) => {
-        setEmail(data.email);
+        setEmail(data);
         console.log(res.data);
         setError("");
         navigate("/password-reset");

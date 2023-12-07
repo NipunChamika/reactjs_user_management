@@ -25,7 +25,7 @@ function App() {
   const [error, setError] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [refreshExpiredError, setRefreshExpiredError] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState({ email: "" });
 
   const router = createBrowserRouter([
     { path: "/", element: <LoginUser /> },

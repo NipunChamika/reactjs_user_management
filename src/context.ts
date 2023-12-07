@@ -1,5 +1,9 @@
 import { createContext } from "react";
 import { User } from "./App";
+import { z } from "zod";
+import { emailSchema } from "./components/validation/validation";
+
+type EmailEntryFormData = z.infer<typeof emailSchema>;
 
 interface UserContextProps {
   user: User;
@@ -12,8 +16,8 @@ interface UserContextProps {
   setIsLoggedIn: (isLoggedIn: boolean) => void;
   refreshExpiredError: string;
   setRefreshExpiredError: (refreshExpiredError: string) => void;
-  email: string;
-  setEmail: (email: string) => void;
+  email: EmailEntryFormData;
+  setEmail: (email: EmailEntryFormData) => void;
 }
 
 export const UserContext = createContext<UserContextProps | undefined>(

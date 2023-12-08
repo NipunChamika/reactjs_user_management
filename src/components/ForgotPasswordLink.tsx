@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { UserContext } from "../context";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { Button } from "primereact/button";
 
 const ForgotPasswordLink = () => {
   const userContext = useContext(UserContext);
@@ -12,12 +13,18 @@ const ForgotPasswordLink = () => {
 
   const {} = userContext;
 
+  const navigate = useNavigate();
+
   return (
     <>
-      <div className="d-flex">
-        <Link to="/email" className="ms-auto px-0 pt-2">
-          Forgot password?
-        </Link>
+      <div className="flex align-items-center justify-content-end">
+        <Button
+          label="Forgot password?"
+          link
+          className="p-0"
+          style={{ fontSize: "12px" }}
+          onClick={() => navigate("/email")}
+        />
       </div>
     </>
   );

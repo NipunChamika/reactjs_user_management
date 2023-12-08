@@ -192,7 +192,7 @@ const LoginUser = ({}: Props) => {
               }}
             />
           </form>
-          <div className="mt-2" style={{ fontSize: "14px", fontWeight: "300" }}>
+          <div className="mt-2" style={{ fontSize: "14px", fontWeight: "400" }}>
             Don't have an account?&nbsp;
             <Button
               // label="Register"

@@ -1,0 +1,10 @@
+.error-message {
+  min-height: 10px;
+  color: #f06565;
+  margin: 0;
+  visibility: hidden;
+}
+
+.error-message.visible {
+  visibility: visible;
+}

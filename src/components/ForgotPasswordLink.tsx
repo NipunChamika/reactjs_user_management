@@ -19,12 +19,14 @@ const ForgotPasswordLink = () => {
     <>
       <div className="flex align-items-center justify-content-end">
         <Button
-          label="Forgot password?"
+          // label="Forgot password?"
           link
-          className="p-0"
+          className="p-0 -mt-1 text-blue-500 hover:text-blue-700"
           style={{ fontSize: "12px" }}
           onClick={() => navigate("/email")}
-        />
+        >
+          Forgot Password?
+        </Button>
       </div>
     </>
   );

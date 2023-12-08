@@ -99,11 +99,15 @@ const LoginUser = ({}: Props) => {
           )}
           {error && <p className="text-danger">{error}</p>}
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex flex-column mb-4">
+            <div className="flex flex-column mb-2">
               <label
                 htmlFor="email"
-                className="mb-2"
-                style={{ fontSize: "20px", fontWeight: "400" }}
+                className="mb-1"
+                style={{
+                  fontSize: "20px",
+                  fontWeight: "400",
+                  color: "#6B6D7C",
+                }}
               >
                 Email
               </label>
@@ -111,21 +115,39 @@ const LoginUser = ({}: Props) => {
                 {...register("email")}
                 id="email"
                 placeholder="Enter your email"
+                className={errors.email && "p-invalid"}
                 style={{
                   borderRadius: "10px",
                   padding: "16px 24px",
                   fontSize: "16px",
                 }}
               />
+              {/* <p
+                className={`styles.error-message ${
+                  errors.email ? "visible" : ""
+                }`}
+              >
+                {errors.email?.message}
+              </p> */}
               {errors.email && (
-                <p className="text-danger">{errors.email.message}</p>
+                <p
+                  className="mt-1 mb-0 ml-2"
+                  style={{ color: "#F06565", fontSize: "14px" }}
+                >
+                  {errors.email.message}
+                </p>
               )}
             </div>
+
             <div className="flex flex-column mb-2">
               <label
                 htmlFor="password"
-                className="mb-2"
-                style={{ fontSize: "20px", fontWeight: "400" }}
+                className="mb-1 mt-1"
+                style={{
+                  fontSize: "20px",
+                  fontWeight: "400",
+                  color: "#6B6D7C",
+                }}
               >
                 Password
               </label>
@@ -134,19 +156,32 @@ const LoginUser = ({}: Props) => {
                 id="password"
                 type="password"
                 placeholder="Enter your password"
+                className={errors.email && "p-invalid"}
                 style={{
                   borderRadius: "10px",
                   padding: "16px 24px",
                   fontSize: "16px",
                 }}
               />
+              {/* <p
+                className={`styles.error-message ${
+                  errors.password ? "visible" : ""
+                }`}
+              >
+                {errors.password?.message}
+              </p> */}
               {errors.password && (
-                <p className="text-danger">{errors.password.message}</p>
+                <p
+                  className="mt-1 mb-0 ml-2"
+                  style={{ color: "#F06565", fontSize: "14px" }}
+                >
+                  {errors.password.message}
+                </p>
               )}
             </div>
             <ForgotPasswordLink />
             <Button
-              label="Login"
+              label="Log in"
               className="bg-bluegray-800 hover:bg-bluegray-900 mt-3 mb-1 w-full"
               style={{
                 border: "none",
@@ -160,11 +195,14 @@ const LoginUser = ({}: Props) => {
           <div className="mt-2" style={{ fontSize: "14px", fontWeight: "300" }}>
             Don't have an account?&nbsp;
             <Button
-              label="Register"
+              // label="Register"
               link
               onClick={() => navigate("/signup")}
-              className="p-0"
-            />
+              className="p-0 text-blue-500 hover:text-blue-700"
+              style={{ fontSize: "14px" }}
+            >
+              Register
+            </Button>
           </div>
         </Card>
       </div>

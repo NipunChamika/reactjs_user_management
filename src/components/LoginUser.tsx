@@ -7,6 +7,9 @@ import axios from "axios";
 import { useContext } from "react";
 import { UserContext } from "../context";
 import ForgotPasswordLink from "./ForgotPasswordLink";
+import { Card } from "primereact/card";
+import { InputText } from "primereact/inputtext";
+import { Button } from "primereact/button";
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
@@ -68,55 +71,102 @@ const LoginUser = ({}: Props) => {
       });
   };
 
+  const cardTitle = (
+    <div
+      style={{
+        fontSize: "32px",
+        fontWeight: "500",
+        textAlign: "center",
+      }}
+    >
+      Log in
+    </div>
+  );
+
   return (
     <>
-      <div className="bg-dark vh-100 d-flex justify-content-center align-items-center">
-        <div className="shadow-sm bg-light bg-gradient p-3 w-25 rounded">
+      <div
+        className="h-screen flex justify-content-center align-items-center"
+        style={{ backgroundColor: "#f4f7fe" }}
+      >
+        <Card
+          title={cardTitle}
+          className="shadow-3 bg-white p-3"
+          style={{ minWidth: "440px", border: "none", borderRadius: "20px" }}
+        >
           {refreshExpiredError && (
             <p className="text-danger">{refreshExpiredError}</p>
           )}
           {error && <p className="text-danger">{error}</p>}
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="mb-3">
-              <label htmlFor="email" className="form-label">
-                <strong>Email</strong>
+            <div className="flex flex-column mb-4">
+              <label
+                htmlFor="email"
+                className="mb-2"
+                style={{ fontSize: "20px", fontWeight: "400" }}
+              >
+                Email
               </label>
-              <input
+              <InputText
                 {...register("email")}
                 id="email"
-                type="text"
-                className="form-control"
                 placeholder="Enter your email"
+                style={{
+                  borderRadius: "10px",
+                  padding: "16px 24px",
+                  fontSize: "16px",
+                }}
               />
               {errors.email && (
                 <p className="text-danger">{errors.email.message}</p>
               )}
             </div>
-            <div className="mb-3">
-              <label htmlFor="password" className="form-label">
-                <strong>Password</strong>
+            <div className="flex flex-column mb-2">
+              <label
+                htmlFor="password"
+                className="mb-2"
+                style={{ fontSize: "20px", fontWeight: "400" }}
+              >
+                Password
               </label>
-              <input
+              <InputText
                 {...register("password")}
                 id="password"
                 type="password"
-                className="form-control"
                 placeholder="Enter your password"
+                style={{
+                  borderRadius: "10px",
+                  padding: "16px 24px",
+                  fontSize: "16px",
+                }}
               />
               {errors.password && (
                 <p className="text-danger">{errors.password.message}</p>
               )}
             </div>
-            <button className="btn btn-success w-100 mb-1">Login</button>
+            <ForgotPasswordLink />
+            <Button
+              label="Login"
+              className="bg-bluegray-800 hover:bg-bluegray-900 mt-3 mb-1 w-full"
+              style={{
+                border: "none",
+                borderRadius: "10px",
+                padding: "18px 40px",
+                fontSize: "16px",
+                fontWeight: "500",
+              }}
+            />
           </form>
-          <button
-            className="btn btn-outline-primary w-100"
-            onClick={() => navigate("/signup")}
-          >
-            Register
-          </button>
-          <ForgotPasswordLink />
-        </div>
+          <div className="mt-2" style={{ fontSize: "14px", fontWeight: "300" }}>
+            Don't have an account?&nbsp;
+            <Button
+              label="Register"
+              link
+              onClick={() => navigate("/signup")}
+              className="p-0"
+            />
+          </div>
+        </Card>
       </div>
     </>
   );

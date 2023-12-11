@@ -1,12 +1,16 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Profile.css";
 import { UserContext } from "../context";
 import { z } from "zod";
 import { updateUserSchema } from "./validation/validation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import sharedStyles from "./SharedStyles.module.css";
+import { Card } from "primereact/card";
+import UserProfile from "../assets/profile.png";
+import styles from "./Profile.module.css";
+import { Button } from "primereact/button";
 
 interface Props {}
 
@@ -59,6 +63,7 @@ const Profile = ({}: Props) => {
         if (err.message === "Network Error") {
           setError(err.message);
         } else if (err.response) {
+          // This displays the token has expired: which is not intended for this component
           setError(err.response.data.message);
         } else {
           setError("Something went wrong");
@@ -164,17 +169,99 @@ const Profile = ({}: Props) => {
       });
   };
 
+  const cardTitle = (
+    <div className={sharedStyles.cardTitle}>{`Welcome ${user.firstName}`}</div>
+  );
+
   return (
     <>
-      <div className="bg-dark vh-100 d-flex justify-content-center align-items-center">
-        <div className="bg-light p-3 w-25 vh-90 rounded shadow-sm overflow-auto">
-          {error && <p className="text-danger">{error}</p>}
-          <h1 className="text-center mb-3">{`Welcome Back, ${user?.firstName}`}</h1>
-          <h5>Profile Details</h5>
+      <div
+        className={`h-screen flex justify-content-center align-items-center ${sharedStyles.container}`}
+      >
+        <Card
+          // title={cardTitle}
+          className={`shadow-3 bg-white p-3 ${sharedStyles.cardContainer}`}
+        >
+          {/* ====================================== */}
+
+          <div className="flex flex-row">
+            <div className="flex align-items-center justify-content-center">
+              <img
+                src={UserProfile}
+                alt="Profile"
+                className={styles.profileImageWrapper}
+                // style={{ maxWidth: "125px", marginRight: "26px" }}
+              />
+            </div>
+            <div className="flex align-items-center justify-content-center">
+              <div className="flex flex-column">
+                <div
+                  className={`flex align-items-center justify-content-start ${sharedStyles.cardTitle}`}
+                >
+                  {`Welcome ${user.firstName}!`}
+                </div>
+                <div className="flex align-items-center justify-content-start">
+                  <div className={`mt-1 ${styles.profileTextWrapper}`}>
+                    Please enter your login details below
+                  </div>
+                </div>
+                <div
+                  className={`flex align-items-center justify-content-start`}
+                >
+                  <Button
+                    link
+                    className={`p-0 mt-2 text-red-400 hover:text-red-600 ${styles.logoutButtonLink}`}
+                    onClick={handleLogout}
+                  >
+                    Log out
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-row">
+            <div className={`mt-4 mb-3 ${styles.profileDetailsHeader}`}>
+              Profile Details
+            </div>
+          </div>
+
+          {/* <div className="flex flex-row"> */}
+          <div className="grid mb-1">
+            <div className="col-2">
+              <div className={styles.profileDetailsHeader}>Name</div>
+            </div>
+            <div className="col-1">
+              <div className={styles.profileDetailsHeader}>:</div>
+            </div>
+            <div className="col-9">
+              <div className={styles.profileDetailsResult}>
+                {user?.firstName + " " + user?.lastName}
+              </div>
+            </div>
+          </div>
+
+          <div className="grid mb-5">
+            <div className="col-2">
+              <div className={styles.profileDetailsHeader}>Email</div>
+            </div>
+            <div className="col-1">
+              <div className={styles.profileDetailsHeader}>:</div>
+            </div>
+            <div className="col-9">
+              <div className={styles.profileDetailsResult}>{user?.email}</div>
+            </div>
+          </div>
+          {/* </div> */}
+
+          {/* ======================================================== */}
+          {/* {error && <p className="text-danger">{error}</p>} */}
+          {/* <h1 className="text-center mb-3">{`Welcome Back, ${user?.firstName}`}</h1> */}
+          {/* <h5>Profile Details</h5>
           <div>
             <p>Name: {user?.firstName + " " + user?.lastName}</p>
             <p>Email: {user?.email}</p>
-          </div>
+          </div> */}
           <div className="d-flex">
             <button
               className="btn btn-outline-primary me-2"
@@ -282,7 +369,7 @@ const Profile = ({}: Props) => {
               </form>
             </div>
           )}
-        </div>
+        </Card>
       </div>
     </>
   );

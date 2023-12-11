@@ -12,7 +12,6 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import sharedStyles from "./SharedStyles.module.css";
-import styles from "./LoginUser.module.css";
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
@@ -193,12 +192,12 @@ const LoginUser = ({}: Props) => {
               className={`bg-bluegray-800 hover:bg-bluegray-900 mt-3 mb-1 w-full ${sharedStyles.button}`}
             />
           </form>
-          <div className={`mt-2 ${styles.registerLink}`}>
+          <div className={`mt-2 ${sharedStyles.registerLink}`}>
             Don't have an account?&nbsp;
             <Button
               link
               onClick={() => navigate("/signup")}
-              className={`p-0 text-blue-500 hover:text-blue-700 ${styles.registerLink}`}
+              className={`p-0 text-blue-500 hover:text-blue-700 ${sharedStyles.registerLink}`}
             >
               Register
             </Button>

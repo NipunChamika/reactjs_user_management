@@ -5,11 +5,11 @@ import { useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { signupSchema } from "./validation/validation";
-import sharedStyles from "./SharedStyles.module.css";
 import { Card } from "primereact/card";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
+import sharedStyles from "./SharedStyles.module.css";
 
 type SignupFormData = z.infer<typeof signupSchema>;
 
@@ -78,7 +78,7 @@ const SignUpUser = () => {
                 htmlFor="firstName"
                 className={`mb-1 ${sharedStyles.formLabel}`}
               >
-                <strong>First Name</strong>
+                First Name
               </label>
               <InputText
                 {...register("firstName")}
@@ -99,7 +99,7 @@ const SignUpUser = () => {
                 htmlFor="lastName"
                 className={`mb-1 ${sharedStyles.formLabel}`}
               >
-                <strong>Last Name</strong>
+                Last Name
               </label>
               <InputText
                 {...register("lastName")}
@@ -120,7 +120,7 @@ const SignUpUser = () => {
                 htmlFor="email"
                 className={`mb-1 ${sharedStyles.formLabel}`}
               >
-                <strong>Email</strong>
+                Email
               </label>
               <InputText
                 {...register("email")}
@@ -141,7 +141,7 @@ const SignUpUser = () => {
                 htmlFor="password"
                 className={`mb-1 ${sharedStyles.formLabel}`}
               >
-                <strong>Password</strong>
+                Password
               </label>
               <InputText
                 {...register("password")}

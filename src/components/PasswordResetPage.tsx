@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../context";
 import { passwordResetSchema } from "./validation/validation";
 import { z } from "zod";
@@ -6,6 +6,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { Card } from "primereact/card";
+import { InputText } from "primereact/inputtext";
+import { Button } from "primereact/button";
+import { Toast } from "primereact/toast";
+import sharedStyles from "./SharedStyles.module.css";
 
 type PasswordResetFormData = z.infer<typeof passwordResetSchema>;
 
@@ -18,8 +23,15 @@ const PasswordResetPage = () => {
     return null;
   }
 
-  const { email, setEmail, error, setError, setRefreshExpiredError } =
-    userContext;
+  const {
+    email,
+    setEmail,
+    setError,
+    setRefreshExpiredError,
+    sendOtp,
+    setSendOtp,
+    setPasswordResetSuccess,
+  } = userContext;
 
   const {
     register,
@@ -35,7 +47,7 @@ const PasswordResetPage = () => {
 
   const [showResend, setShowResend] = useState(false);
 
-  const [resendSuccess, setResendSuccess] = useState("");
+  const toast = useRef<Toast>(null);
 
   useEffect(() => {
     if (timer > 0) {
@@ -48,13 +60,26 @@ const PasswordResetPage = () => {
     }
   }, [timer]);
 
+  useEffect(() => {
+    if (sendOtp && toast.current) {
+      toast.current.clear();
+
+      toast.current.show({
+        severity: "success",
+        summary: "Success",
+        detail: `We have sent a code to ${email.email}`,
+        life: 3000,
+      });
+    }
+
+    setSendOtp(false);
+  }, [sendOtp]);
+
   const onSubmit = (data: PasswordResetFormData) => {
     const payload = {
       ...data,
       email: email.email,
     };
-
-    setResendSuccess("");
 
     axios
       .post("http://localhost:3000/user/reset-password", payload)
@@ -63,6 +88,7 @@ const PasswordResetPage = () => {
         setEmail({ email: "" });
         setError("");
         setRefreshExpiredError("");
+        setPasswordResetSuccess(true);
         navigate("/");
       })
       .catch((err) => {
@@ -88,76 +114,145 @@ const PasswordResetPage = () => {
         setShowResend(false);
         setTimer(60);
         setError("");
-        setResendSuccess("A new OTP has been sent to your email");
+        // setResendSuccess("A new OTP has been sent to your email");
+        if (toast.current) {
+          toast.current.show({
+            severity: "success",
+            summary: "Success",
+            detail: "A new OTP has been sent to your email",
+            life: 3000,
+          });
+        }
+
         console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
-        if (err.response.status === 404) {
-          setError("User with the email not found");
+        // setError("User with the email not found");
+        if (err.message === "Network Error") {
+          // setError("Cannot connect to the server. Please try again later.");
+          if (toast.current) {
+            toast.current.show({
+              severity: "error",
+              summary: "Error",
+              detail: "Cannot connect to the server. Please try again later.",
+              life: 3000,
+            });
+          }
+        } else if (err.response.status === 404) {
+          // setError("Cannot connect to the server. Please try again later.");
+          if (toast.current) {
+            toast.current.show({
+              severity: "error",
+              summary: "Error",
+              detail: "User with the email not found",
+              life: 3000,
+            });
+          }
+        } else {
+          // setError("Login Failed");
+          if (toast.current) {
+            toast.current.show({
+              severity: "error",
+              summary: "Error",
+              detail: "Email Verification Failed",
+              life: 3000,
+            });
+          }
         }
       });
   };
 
+  const cardTitle = (
+    <div className={sharedStyles.cardTitle}>Reset Password</div>
+  );
+
   return (
     <>
-      <div className="bg-dark vh-100 d-flex justify-content-center align-items-center">
-        <div className="shadow-sm bg-light bg-gradient p-3 w-25 rounded">
-          {error && <p className="text-danger">{error}</p>}
-          {resendSuccess && <p className="text-success">{resendSuccess}</p>}
-          <h3 className="mb-2">Reset Password</h3>
-          <p>
+      <Toast ref={toast} />
+      <div
+        className={`h-screen flex justify-content-center align-items-center ${sharedStyles.container}`}
+      >
+        <Card
+          title={cardTitle}
+          className={`shadow-3 bg-white p-3 ${sharedStyles.cardContainer}`}
+        >
+          {/* {error && <p className="text-danger">{error}</p>} */}
+          {/* {resendSuccess && <p className="text-success">{resendSuccess}</p>} */}
+          {/* <p className="-mt-3 mb-5">
             We have sent a code to <strong>{email.email}</strong>
-          </p>
+          </p> */}
           <div>
             <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="mb-2">
-                <label htmlFor="otp" className="form-label mb-1">
+              <div className="flex flex-column mb-2">
+                <label
+                  htmlFor="otp"
+                  className={`mb-1 ${sharedStyles.formLabel}`}
+                >
                   OTP
                 </label>
-                <input
+                <InputText
                   {...register("otp")}
                   id="otp"
-                  type="text"
-                  className="form-control"
+                  placeholder="Enter OTP code"
+                  className={`${errors.otp && "p-invalid"} ${
+                    sharedStyles.formInput
+                  }`}
                   maxLength={4}
                 />
                 {errors.otp && (
-                  <p className="text-danger">{errors.otp.message}</p>
+                  <p className={`mt-1 mb-0 ml-2 ${sharedStyles.errorMessage}`}>
+                    {errors.otp.message}
+                  </p>
                 )}
               </div>
-              <div className="mb-4">
-                <label htmlFor="newPassword">New Password</label>
-                <input
+              <div className="flex flex-column mb-2">
+                <label
+                  htmlFor="newPassword"
+                  className={`mb-1 ${sharedStyles.formLabel}`}
+                >
+                  New Password
+                </label>
+                <InputText
                   {...register("newPassword")}
                   id="newPassword"
                   type="password"
-                  className="form-control mt-2"
+                  placeholder="Enter new password"
+                  className={`${errors.newPassword && "p-invalid"} ${
+                    sharedStyles.formInput
+                  }`}
                 />
                 {errors.newPassword && (
-                  <p className="text-danger">{errors.newPassword.message}</p>
+                  <p className={`mt-1 mb-0 ml-2 ${sharedStyles.errorMessage}`}>
+                    {errors.newPassword.message}
+                  </p>
                 )}
               </div>
-              <button type="submit" className="btn btn-primary">
-                Reset
-              </button>
+              <Button
+                label="Reset Password"
+                type="submit"
+                className={`bg-bluegray-800 hover:bg-bluegray-900 mt-3 mb-1 w-full ${sharedStyles.button}`}
+              />
             </form>
-            <div className="mt-3 d-flex align-items-baseline">
+            <div
+              className={`flex align-items-center justify-content-start mt-2 ${sharedStyles.Link}`}
+            >
               <span>Didn't receive the code?&nbsp;</span>
               {showResend ? (
-                <div
+                <Button
+                  link
                   onClick={handleResend}
                   role="button"
-                  className="cursor-pointer text-decoration-underline text-primary"
+                  className={`p-0 text-blue-500 hover:text-blue-700 ${sharedStyles.Link}`}
                 >
                   Resend OTP
-                </div>
+                </Button>
               ) : (
                 <div>Resend OTP in {timer}s</div>
               )}
             </div>
           </div>
-        </div>
+        </Card>
       </div>
     </>
   );

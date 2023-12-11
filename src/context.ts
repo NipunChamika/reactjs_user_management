@@ -18,6 +18,10 @@ interface UserContextProps {
   setRefreshExpiredError: (refreshExpiredError: string) => void;
   email: EmailEntryFormData;
   setEmail: (email: EmailEntryFormData) => void;
+  sendOtp: boolean;
+  setSendOtp: (sendOtp: boolean) => void;
+  passwordResetSuccess: boolean;
+  setPasswordResetSuccess: (passwordResetSuccess: boolean) => void;
 }
 
 export const UserContext = createContext<UserContextProps | undefined>(

@@ -35,6 +35,8 @@ const LoginUser = ({}: Props) => {
     setError,
     refreshExpiredError,
     setRefreshExpiredError,
+    passwordResetSuccess,
+    setPasswordResetSuccess,
   } = userContext;
 
   const navigate = useNavigate();
@@ -57,8 +59,24 @@ const LoginUser = ({}: Props) => {
         detail: refreshExpiredError,
         life: 3000,
       });
+
+      setRefreshExpiredError("");
     }
   }, [refreshExpiredError]);
+
+  useEffect(() => {
+    if (passwordResetSuccess && toast.current) {
+      toast.current.clear();
+
+      toast.current.show({
+        severity: "success",
+        summary: "Success",
+        detail: "Password Reset Successful",
+        life: 3000,
+      });
+    }
+    setPasswordResetSuccess(false);
+  });
 
   const onSubmit = (data: LoginFormData) => {
     axios

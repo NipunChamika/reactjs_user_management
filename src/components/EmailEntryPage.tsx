@@ -22,7 +22,7 @@ const EmailEntryPage = () => {
     return null;
   }
 
-  const { setEmail, setError } = userContext;
+  const { setEmail, setError, setSendOtp } = userContext;
 
   const {
     register,
@@ -43,6 +43,7 @@ const EmailEntryPage = () => {
         setEmail(data);
         console.log(res.data);
         setError("");
+        setSendOtp(true);
         navigate("/password-reset");
       })
       .catch((err) => {

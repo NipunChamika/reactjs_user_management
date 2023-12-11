@@ -1,4 +1,11 @@
-.error-message {
+/* Register Link */
+.registerLink {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+/* Error Message */
+/* .error-message {
   min-height: 10px;
   color: #f06565;
   margin: 0;
@@ -7,4 +14,4 @@
 
 .error-message.visible {
   visibility: visible;
-}
+} */

@@ -11,6 +11,8 @@ import { Card } from "primereact/card";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
+import sharedStyles from "./SharedStyles.module.css";
+import styles from "./LoginUser.module.css";
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
@@ -32,7 +34,6 @@ const LoginUser = ({}: Props) => {
     setUserId,
     setIsLoggedIn,
     setError,
-    error,
     refreshExpiredError,
     setRefreshExpiredError,
   } = userContext;
@@ -111,29 +112,17 @@ const LoginUser = ({}: Props) => {
       });
   };
 
-  const cardTitle = (
-    <div
-      style={{
-        fontSize: "32px",
-        fontWeight: "500",
-        textAlign: "center",
-      }}
-    >
-      Log in
-    </div>
-  );
+  const cardTitle = <div className={sharedStyles.cardTitle}>Log in</div>;
 
   return (
     <>
       <Toast ref={toast} />
       <div
-        className="h-screen flex justify-content-center align-items-center"
-        style={{ backgroundColor: "#f4f7fe" }}
+        className={`h-screen flex justify-content-center align-items-center ${sharedStyles.container}`}
       >
         <Card
           title={cardTitle}
-          className="shadow-3 bg-white p-3"
-          style={{ minWidth: "440px", border: "none", borderRadius: "20px" }}
+          className={`shadow-3 bg-white p-3 ${sharedStyles.cardContainer}`}
         >
           {/* {refreshExpiredError && (
             <p className="text-danger">{refreshExpiredError}</p>
@@ -143,12 +132,7 @@ const LoginUser = ({}: Props) => {
             <div className="flex flex-column mb-2">
               <label
                 htmlFor="email"
-                className="mb-1"
-                style={{
-                  fontSize: "20px",
-                  fontWeight: "400",
-                  color: "#6B6D7C",
-                }}
+                className={`mb-1 ${sharedStyles.formLabel}`}
               >
                 Email
               </label>
@@ -156,12 +140,9 @@ const LoginUser = ({}: Props) => {
                 {...register("email")}
                 id="email"
                 placeholder="Enter your email"
-                className={errors.email && "p-invalid"}
-                style={{
-                  borderRadius: "10px",
-                  padding: "16px 24px",
-                  fontSize: "16px",
-                }}
+                className={`${errors.email && "p-invalid"} ${
+                  sharedStyles.formInput
+                }`}
               />
               {/* <p
                 className={`styles.error-message ${
@@ -171,10 +152,7 @@ const LoginUser = ({}: Props) => {
                 {errors.email?.message}
               </p> */}
               {errors.email && (
-                <p
-                  className="mt-1 mb-0 ml-2"
-                  style={{ color: "#F06565", fontSize: "14px" }}
-                >
+                <p className={`mt-1 mb-0 ml-2 ${sharedStyles.errorMessage}`}>
                   {errors.email.message}
                 </p>
               )}
@@ -183,12 +161,7 @@ const LoginUser = ({}: Props) => {
             <div className="flex flex-column mb-2">
               <label
                 htmlFor="password"
-                className="mb-1 mt-1"
-                style={{
-                  fontSize: "20px",
-                  fontWeight: "400",
-                  color: "#6B6D7C",
-                }}
+                className={`mb-1 mt-1 ${sharedStyles.formLabel}`}
               >
                 Password
               </label>
@@ -197,12 +170,9 @@ const LoginUser = ({}: Props) => {
                 id="password"
                 type="password"
                 placeholder="Enter your password"
-                className={errors.email && "p-invalid"}
-                style={{
-                  borderRadius: "10px",
-                  padding: "16px 24px",
-                  fontSize: "16px",
-                }}
+                className={`${errors.email && "p-invalid"} ${
+                  sharedStyles.formInput
+                }`}
               />
               {/* <p
                 className={`styles.error-message ${
@@ -212,10 +182,7 @@ const LoginUser = ({}: Props) => {
                 {errors.password?.message}
               </p> */}
               {errors.password && (
-                <p
-                  className="mt-1 mb-0 ml-2"
-                  style={{ color: "#F06565", fontSize: "14px" }}
-                >
+                <p className={`mt-1 mb-0 ml-2 ${sharedStyles.errorMessage}`}>
                   {errors.password.message}
                 </p>
               )}
@@ -223,24 +190,15 @@ const LoginUser = ({}: Props) => {
             <ForgotPasswordLink />
             <Button
               label="Log in"
-              className="bg-bluegray-800 hover:bg-bluegray-900 mt-3 mb-1 w-full"
-              style={{
-                border: "none",
-                borderRadius: "10px",
-                padding: "18px 40px",
-                fontSize: "16px",
-                fontWeight: "500",
-              }}
+              className={`bg-bluegray-800 hover:bg-bluegray-900 mt-3 mb-1 w-full ${sharedStyles.button}`}
             />
           </form>
-          <div className="mt-2" style={{ fontSize: "14px", fontWeight: "400" }}>
+          <div className={`mt-2 ${styles.registerLink}`}>
             Don't have an account?&nbsp;
             <Button
-              // label="Register"
               link
               onClick={() => navigate("/signup")}
-              className="p-0 text-blue-500 hover:text-blue-700"
-              style={{ fontSize: "14px" }}
+              className={`p-0 text-blue-500 hover:text-blue-700 ${styles.registerLink}`}
             >
               Register
             </Button>

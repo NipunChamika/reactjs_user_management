@@ -14,7 +14,7 @@ const SignUpUser = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<SignupFormData>({ resolver: zodResolver(signupSchema) });
-  
+
   const [error, setError] = useState("");
   const navigate = useNavigate();
 

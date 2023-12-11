@@ -46,8 +46,8 @@
   font-weight: 500;
 }
 
-/* Register Link */
-.registerLink {
+/* Register/Remember password Link */
+.Link {
   font-size: 14px;
   font-weight: 400;
 }

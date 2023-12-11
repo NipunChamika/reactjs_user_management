@@ -192,12 +192,12 @@ const LoginUser = ({}: Props) => {
               className={`bg-bluegray-800 hover:bg-bluegray-900 mt-3 mb-1 w-full ${sharedStyles.button}`}
             />
           </form>
-          <div className={`mt-2 ${sharedStyles.registerLink}`}>
+          <div className={`mt-2 ${sharedStyles.Link}`}>
             Don't have an account?&nbsp;
             <Button
               link
               onClick={() => navigate("/signup")}
-              className={`p-0 text-blue-500 hover:text-blue-700 ${sharedStyles.registerLink}`}
+              className={`p-0 text-blue-500 hover:text-blue-700 ${sharedStyles.Link}`}
             >
               Register
             </Button>

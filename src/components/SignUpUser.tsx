@@ -9,6 +9,7 @@ import { Card } from "primereact/card";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
+import { Tooltip } from "primereact/tooltip";
 import sharedStyles from "./SharedStyles.module.css";
 
 type SignupFormData = z.infer<typeof signupSchema>;
@@ -141,7 +142,13 @@ const SignUpUser = () => {
                 htmlFor="password"
                 className={`mb-1 ${sharedStyles.formLabel}`}
               >
-                Password
+                Password{" "}
+                <i
+                  className="pi pi-info-circle"
+                  data-pr-tooltip="Password must be at least 8 characters long"
+                  data-pr-position="right"
+                />
+                <Tooltip target=".pi-info-circle" />
               </label>
               <InputText
                 {...register("password")}

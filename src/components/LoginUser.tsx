@@ -4,12 +4,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { loginSchema } from "./validation/validation";
 import axios from "axios";
-import { useContext } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { UserContext } from "../context";
 import ForgotPasswordLink from "./ForgotPasswordLink";
 import { Card } from "primereact/card";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
+import { Toast } from "primereact/toast";
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
@@ -44,6 +45,21 @@ const LoginUser = ({}: Props) => {
     formState: { errors },
   } = useForm<LoginFormData>({ resolver: zodResolver(loginSchema) });
 
+  const toast = useRef<Toast>(null);
+
+  useEffect(() => {
+    if (refreshExpiredError && toast.current) {
+      toast.current.clear();
+
+      toast.current.show({
+        severity: "error",
+        summary: "Session Expired",
+        detail: refreshExpiredError,
+        life: 3000,
+      });
+    }
+  }, [refreshExpiredError]);
+
   const onSubmit = (data: LoginFormData) => {
     axios
       .post("http://localhost:3000/user/login", data)
@@ -62,11 +78,35 @@ const LoginUser = ({}: Props) => {
         console.log(err);
 
         if (err.message === "Network Error") {
-          setError("Cannot connect to the server. Please try again later.");
+          // setError("Cannot connect to the server. Please try again later.");
+          if (toast.current) {
+            toast.current.show({
+              severity: "error",
+              summary: "Error",
+              detail: "Cannot connect to the server. Please try again later.",
+              life: 3000,
+            });
+          }
         } else if (err.response) {
-          setError(err.response.data.message);
+          // setError(err.response.data.message);
+          if (toast.current) {
+            toast.current.show({
+              severity: "error",
+              summary: "Error",
+              detail: err.response.data.message,
+              life: 3000,
+            });
+          }
         } else {
-          setError("Login Failed");
+          // setError("Login Failed");
+          if (toast.current) {
+            toast.current.show({
+              severity: "error",
+              summary: "Error",
+              detail: "Login Failed",
+              life: 3000,
+            });
+          }
         }
       });
   };
@@ -85,6 +125,7 @@ const LoginUser = ({}: Props) => {
 
   return (
     <>
+      <Toast ref={toast} />
       <div
         className="h-screen flex justify-content-center align-items-center"
         style={{ backgroundColor: "#f4f7fe" }}
@@ -94,10 +135,10 @@ const LoginUser = ({}: Props) => {
           className="shadow-3 bg-white p-3"
           style={{ minWidth: "440px", border: "none", borderRadius: "20px" }}
         >
-          {refreshExpiredError && (
+          {/* {refreshExpiredError && (
             <p className="text-danger">{refreshExpiredError}</p>
           )}
-          {error && <p className="text-danger">{error}</p>}
+          {error && <p className="text-danger">{error}</p>} */}
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-column mb-2">
               <label

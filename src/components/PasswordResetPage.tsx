@@ -95,13 +95,55 @@ const PasswordResetPage = () => {
         console.log(err);
 
         if (err.message === "Network Error") {
-          setError("Cannot connect to the server. Please try again later.");
+          // setError("Cannot connect to the server. Please try again later.");
+          if (toast.current) {
+            toast.current.show({
+              severity: "error",
+              summary: "Error",
+              detail: "Cannot connect to the server. Please try again later.",
+              life: 3000,
+            });
+          }
         } else if (err.response.data.message === "Invalid OTP or Email") {
-          setError("Invalid OTP");
+          // setError("Invalid OTP");
+          if (toast.current) {
+            toast.current.show({
+              severity: "error",
+              summary: "Error",
+              detail: "Invalid OTP",
+              life: 3000,
+            });
+          }
+        } else if (err.response.data.message === "OTP has expired") {
+          // setError("OTP has expired");
+          if (toast.current) {
+            toast.current.show({
+              severity: "info",
+              summary: "Info",
+              detail: "OTP has expired",
+              life: 3000,
+            });
+          }
         } else if (err.response) {
-          setError(err.response.data.message);
+          // setError(err.response.data.message);
+          if (toast.current) {
+            toast.current.show({
+              severity: "error",
+              summary: "Error",
+              detail: err.response.data.message,
+              life: 3000,
+            });
+          }
         } else {
-          setError("Login Failed");
+          // setError("Password Reset Failed");
+          if (toast.current) {
+            toast.current.show({
+              severity: "error",
+              summary: "Error",
+              detail: "Password Reset Failed",
+              life: 3000,
+            });
+          }
         }
       });
   };

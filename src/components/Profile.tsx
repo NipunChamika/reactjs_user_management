@@ -33,16 +33,12 @@ const Profile = ({}: Props) => {
     return null;
   }
 
-  const {
-    userId,
-    setUser,
-    user,
-    setError,
-    setIsLoggedIn,
-    setRefreshExpiredError,
-  } = userContext;
+  const { setUser, user, setError, setIsLoggedIn, setRefreshExpiredError } =
+    userContext;
 
   const accessToken = localStorage.getItem("accessToken");
+
+  const id = localStorage.getItem("id");
 
   const config = { headers: { Authorization: `Bearer ${accessToken}` } };
 
@@ -54,8 +50,9 @@ const Profile = ({}: Props) => {
 
     // const config = { headers: { Authorization: `Bearer ${accessToken}` } };
 
+    // Earlier userId was the endpoint
     axios
-      .get("http://localhost:3000/user/" + userId, config)
+      .get("http://localhost:3000/user/" + id, config)
       .then((res) => {
         setUser(res.data.user);
         // console.log("Updated user: ", user);
@@ -118,7 +115,7 @@ const Profile = ({}: Props) => {
 
   const onSubmit = (data: UpdateFormData) => {
     console.log(data);
-    console.log(userId);
+    // console.log(userId);
 
     // Filter out empty fields before calling the API
     const updatedData = Object.fromEntries(
@@ -141,7 +138,7 @@ const Profile = ({}: Props) => {
     }
 
     axios
-      .patch("http://localhost:3000/user/" + userId, updatedData, config)
+      .patch("http://localhost:3000/user/" + id, updatedData, config)
       .then((res) => {
         setUser(res.data.user);
         setShouldRefetch(true);

@@ -103,6 +103,7 @@ const LoginUser = ({}: Props) => {
         localStorage.setItem("accessToken", res.data.accessToken);
         localStorage.setItem("refreshToken", res.data.refreshToken);
         setUserId(res.data.user.id);
+        localStorage.setItem("id", res.data.user.id);
         setRefreshExpiredError("");
         setError("");
         setIsLoggedIn(true);

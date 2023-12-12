@@ -11,6 +11,7 @@ import { Card } from "primereact/card";
 import UserProfile from "../assets/profile.png";
 import styles from "./Profile.module.css";
 import { Button } from "primereact/button";
+import { Dialog } from "primereact/dialog";
 
 interface Props {}
 
@@ -226,29 +227,49 @@ const Profile = ({}: Props) => {
             </div>
           </div>
 
+          {/* <div className="flex flex-row">
+            <div className="flex align-items-baseline">
+              <div className={`${styles.profileDetailsHeader}`}>Name</div>
+              <div className={`mx-3 ${styles.profileDetailsHeader}`}>:</div>
+              <div className={`${styles.profileDetailsResult}`}>
+                {user?.firstName + " " + user?.lastName}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-row">
+            <div className="flex align-items-baseline">
+              <div className={`${styles.profileDetailsHeader}`}>Email</div>
+              <div className={`mx-3 ${styles.profileDetailsHeader}`}>:</div>
+              <div className={`${styles.profileDetailsResult}`}>
+                {user?.email}
+              </div>
+            </div>
+          </div> */}
+
           {/* <div className="flex flex-row"> */}
           <div className="grid mb-1">
-            <div className="col-2">
-              <div className={styles.profileDetailsHeader}>Name</div>
+            <div className="col-2 flex align-items-baseline">
+              <div className={`${styles.profileDetailsHeader}`}>Name</div>
             </div>
-            <div className="col-1">
-              <div className={styles.profileDetailsHeader}>:</div>
+            <div className="col-1 flex align-items-baseline">
+              <div className={`${styles.profileDetailsHeader}`}>:</div>
             </div>
-            <div className="col-9">
-              <div className={styles.profileDetailsResult}>
+            <div className="col-9 flex align-items-baseline">
+              <div className={`${styles.profileDetailsResult}`}>
                 {user?.firstName + " " + user?.lastName}
               </div>
             </div>
           </div>
 
           <div className="grid mb-5">
-            <div className="col-2">
+            <div className="col-2 flex align-items-baseline">
               <div className={styles.profileDetailsHeader}>Email</div>
             </div>
-            <div className="col-1">
+            <div className="col-1 flex align-items-baseline">
               <div className={styles.profileDetailsHeader}>:</div>
             </div>
-            <div className="col-9">
+            <div className="col-9 flex align-items-baseline">
               <div className={styles.profileDetailsResult}>{user?.email}</div>
             </div>
           </div>
@@ -262,30 +283,137 @@ const Profile = ({}: Props) => {
             <p>Name: {user?.firstName + " " + user?.lastName}</p>
             <p>Email: {user?.email}</p>
           </div> */}
-          <div className="d-flex">
-            <button
-              className="btn btn-outline-primary me-2"
+          <div className="flex align-items-center justify-content-between">
+            <Button
+              label="Update"
+              severity="secondary"
+              outlined
+              className={`border-bluegray-700 hover:border-bluegray-900 w-10rem text-bluegray-700 hover:text-bluegray-900 ${styles.profileButton}`}
               onClick={() => {
                 setUpdateUser(true);
                 setShouldRefetch(false);
               }}
-            >
-              Update
-            </button>
-            <button className="btn btn-outline-danger" onClick={handleLogout}>
-              Logout
-            </button>
-            <button
-              className="btn btn-primary ms-auto"
+            />
+
+            {/* <Button
+              label="Update"
+              severity="secondary"
+              outlined
+              className={`border-bluegray-700 hover:border-bluegray-900 w-10rem text-bluegray-700 hover:text-bluegray-900 ${styles.profileButton}`}
+              onClick={() => {
+                setUpdateUser(true);
+                setShouldRefetch(false);
+              }}
+            /> */}
+
+            <Button
+              label="Refresh Token"
+              className={`bg-bluegray-800 hover:bg-bluegray-900 border-bluegray-800 hover:border-bluegray-900 w-10rem ${styles.profileButton}`}
               onClick={handleRefreshToken}
-            >
-              Refresh Token
-            </button>
+            />
           </div>
+
+          {/* =============================== */}
+
+          <Dialog
+            header={
+              <div className="flex justify-content-center align-items-center">
+                Update Details
+              </div>
+            }
+            visible={updateUser}
+            onHide={() => setUpdateUser(false)}
+            style={{ width: "35vw" }}
+            // contentStyle={{ borderRadius: "20px" }}
+            // className={styles.customDialog}
+            draggable={false}
+            dismissableMask
+          >
+            <div className={`flex justify-content-center align-items-center`}>
+              {/* {updateError && <p className="text-danger">{updateError}</p>} */}
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <div className="mb-3">
+                  <label htmlFor="firstName" className="form-label">
+                    <strong>First Name</strong>
+                  </label>
+                  <input
+                    {...register("firstName")}
+                    id="firstName"
+                    type="text"
+                    className="form-control"
+                    placeholder="Enter your first name"
+                  />
+                  {errors.firstName && (
+                    <p className="text-danger">{errors.firstName.message}</p>
+                  )}
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="lastName" className="form-label">
+                    <strong>Last Name</strong>
+                  </label>
+                  <input
+                    {...register("lastName")}
+                    id="lastName"
+                    type="text"
+                    className="form-control"
+                    placeholder="Enter your lastName"
+                  />
+                  {errors.lastName && (
+                    <p className="text-danger">{errors.lastName.message}</p>
+                  )}
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="email" className="form-label">
+                    <strong>Email</strong>
+                  </label>
+                  <input
+                    {...register("email")}
+                    id="email"
+                    type="text"
+                    className="form-control"
+                    placeholder="Enter your email"
+                  />
+                  {errors.email && (
+                    <p className="text-danger">{errors.email.message}</p>
+                  )}
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="password" className="form-label">
+                    <strong>Password</strong>
+                  </label>
+                  <input
+                    {...register("password")}
+                    id="password"
+                    type="password"
+                    className="form-control"
+                    placeholder="Enter your password"
+                  />
+                  {errors.password && (
+                    <p className="text-danger">{errors.password.message}</p>
+                  )}
+                </div>
+                <button
+                  type="submit"
+                  className="btn btn-outline-primary mb-1 me-2"
+                >
+                  Submit
+                </button>
+                <button
+                  className="btn btn-outline-secondary"
+                  onClick={() => {
+                    setUpdateUser(false);
+                    setUpdateError("");
+                  }}
+                >
+                  Cancel
+                </button>
+              </form>
+            </div>
+          </Dialog>
 
           {/* =========================================================================== */}
 
-          {updateUser && (
+          {/* {updateUser && (
             <div>
               <br />
               {updateError && <p className="text-danger">{updateError}</p>}
@@ -368,7 +496,7 @@ const Profile = ({}: Props) => {
                 </button>
               </form>
             </div>
-          )}
+          )} */}
         </Card>
       </div>
     </>

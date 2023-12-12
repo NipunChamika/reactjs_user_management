@@ -4,9 +4,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { loginSchema } from "./validation/validation";
 import axios from "axios";
-import { useContext } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { UserContext } from "../context";
 import ForgotPasswordLink from "./ForgotPasswordLink";
+import { Card } from "primereact/card";
+import { InputText } from "primereact/inputtext";
+import { Button } from "primereact/button";
+import { Toast } from "primereact/toast";
+import sharedStyles from "./SharedStyles.module.css";
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
@@ -28,9 +33,12 @@ const LoginUser = ({}: Props) => {
     setUserId,
     setIsLoggedIn,
     setError,
-    error,
     refreshExpiredError,
     setRefreshExpiredError,
+    passwordResetSuccess,
+    setPasswordResetSuccess,
+    isSignupSuccess,
+    setIsSignupSuccess,
   } = userContext;
 
   const navigate = useNavigate();
@@ -41,6 +49,51 @@ const LoginUser = ({}: Props) => {
     formState: { errors },
   } = useForm<LoginFormData>({ resolver: zodResolver(loginSchema) });
 
+  const toast = useRef<Toast>(null);
+
+  useEffect(() => {
+    if (refreshExpiredError && toast.current) {
+      toast.current.clear();
+
+      toast.current.show({
+        severity: "error",
+        summary: "Session Expired",
+        detail: refreshExpiredError,
+        life: 3000,
+      });
+
+      setRefreshExpiredError("");
+    }
+  }, [refreshExpiredError]);
+
+  useEffect(() => {
+    if (passwordResetSuccess && toast.current) {
+      toast.current.clear();
+
+      toast.current.show({
+        severity: "success",
+        summary: "Success",
+        detail: "Password Reset Successful",
+        life: 3000,
+      });
+    }
+    setPasswordResetSuccess(false);
+  }, [passwordResetSuccess]);
+
+  useEffect(() => {
+    if (isSignupSuccess && toast.current) {
+      toast.current.clear();
+
+      toast.current.show({
+        severity: "success",
+        summary: "Success",
+        detail: "User Signup Successful",
+        life: 3000,
+      });
+    }
+    setIsSignupSuccess(false);
+  }, [isSignupSuccess]);
+
   const onSubmit = (data: LoginFormData) => {
     axios
       .post("http://localhost:3000/user/login", data)
@@ -50,6 +103,7 @@ const LoginUser = ({}: Props) => {
         localStorage.setItem("accessToken", res.data.accessToken);
         localStorage.setItem("refreshToken", res.data.refreshToken);
         setUserId(res.data.user.id);
+        localStorage.setItem("id", res.data.user.id);
         setRefreshExpiredError("");
         setError("");
         setIsLoggedIn(true);
@@ -59,64 +113,131 @@ const LoginUser = ({}: Props) => {
         console.log(err);
 
         if (err.message === "Network Error") {
-          setError("Cannot connect to the server. Please try again later.");
+          // setError("Cannot connect to the server. Please try again later.");
+          if (toast.current) {
+            toast.current.show({
+              severity: "error",
+              summary: "Error",
+              detail: "Cannot connect to the server. Please try again later.",
+              life: 3000,
+            });
+          }
         } else if (err.response) {
-          setError(err.response.data.message);
+          // setError(err.response.data.message);
+          if (toast.current) {
+            toast.current.show({
+              severity: "error",
+              summary: "Error",
+              detail: err.response.data.message,
+              life: 3000,
+            });
+          }
         } else {
-          setError("Login Failed");
+          // setError("Login Failed");
+          if (toast.current) {
+            toast.current.show({
+              severity: "error",
+              summary: "Error",
+              detail: "Login Failed",
+              life: 3000,
+            });
+          }
         }
       });
   };
 
+  const cardTitle = <div className={sharedStyles.cardTitle}>Log in</div>;
+
   return (
     <>
-      <div className="bg-dark vh-100 d-flex justify-content-center align-items-center">
-        <div className="shadow-sm bg-light bg-gradient p-3 w-25 rounded">
-          {refreshExpiredError && (
+      <Toast ref={toast} />
+      <div
+        className={`h-screen flex justify-content-center align-items-center ${sharedStyles.container}`}
+      >
+        <Card
+          title={cardTitle}
+          className={`shadow-3 bg-white p-3 ${sharedStyles.cardContainer}`}
+        >
+          {/* {refreshExpiredError && (
             <p className="text-danger">{refreshExpiredError}</p>
           )}
-          {error && <p className="text-danger">{error}</p>}
+          {error && <p className="text-danger">{error}</p>} */}
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="mb-3">
-              <label htmlFor="email" className="form-label">
-                <strong>Email</strong>
+            <div className="flex flex-column mb-2">
+              <label
+                htmlFor="email"
+                className={`mb-1 ${sharedStyles.formLabel}`}
+              >
+                Email
               </label>
-              <input
+              <InputText
                 {...register("email")}
                 id="email"
-                type="text"
-                className="form-control"
                 placeholder="Enter your email"
+                className={`${errors.email && "p-invalid"} ${
+                  sharedStyles.formInput
+                }`}
               />
+              {/* <p
+                className={`styles.error-message ${
+                  errors.email ? "visible" : ""
+                }`}
+              >
+                {errors.email?.message}
+              </p> */}
               {errors.email && (
-                <p className="text-danger">{errors.email.message}</p>
+                <p className={`mt-1 mb-0 ml-2 ${sharedStyles.errorMessage}`}>
+                  {errors.email.message}
+                </p>
               )}
             </div>
-            <div className="mb-3">
-              <label htmlFor="password" className="form-label">
-                <strong>Password</strong>
+
+            <div className="flex flex-column mb-2">
+              <label
+                htmlFor="password"
+                className={`mb-1 mt-1 ${sharedStyles.formLabel}`}
+              >
+                Password
               </label>
-              <input
+              <InputText
                 {...register("password")}
                 id="password"
                 type="password"
-                className="form-control"
                 placeholder="Enter your password"
+                className={`${errors.email && "p-invalid"} ${
+                  sharedStyles.formInput
+                }`}
               />
+              {/* <p
+                className={`styles.error-message ${
+                  errors.password ? "visible" : ""
+                }`}
+              >
+                {errors.password?.message}
+              </p> */}
               {errors.password && (
-                <p className="text-danger">{errors.password.message}</p>
+                <p className={`mt-1 mb-0 ml-2 ${sharedStyles.errorMessage}`}>
+                  {errors.password.message}
+                </p>
               )}
             </div>
-            <button className="btn btn-success w-100 mb-1">Login</button>
+            <ForgotPasswordLink />
+            <Button
+              label="Log in"
+              className={`bg-bluegray-800 hover:bg-bluegray-900 mt-3 mb-1 w-full ${sharedStyles.button}`}
+            />
           </form>
-          <button
-            className="btn btn-outline-primary w-100"
-            onClick={() => navigate("/signup")}
-          >
-            Register
-          </button>
-          <ForgotPasswordLink />
-        </div>
+          <div className={`mt-2 ${sharedStyles.Link}`}>
+            Don't have an account?&nbsp;
+            <Button
+              link
+              onClick={() => navigate("/signup")}
+              className={`p-0 text-blue-500 hover:text-blue-700 ${sharedStyles.Link}`}
+            >
+              Register
+            </Button>
+          </div>
+        </Card>
       </div>
     </>
   );

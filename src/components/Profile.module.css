@@ -1,0 +1,33 @@
+.profileImageWrapper {
+  max-width: 125px;
+  margin-right: 26px;
+}
+
+.profileTextWrapper {
+  font-size: 16px;
+  font-weight: 300;
+}
+
+.logoutButtonLink {
+  font-size: 14px;
+  font-weight: 300;
+}
+
+.profileDetailsHeader {
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.profileDetailsResult {
+  font-size: 16px;
+  font-weight: 300;
+}
+
+.profileButton {
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.updateDialog {
+  border-radius: 20px;
+}

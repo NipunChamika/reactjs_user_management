@@ -1,22 +1,39 @@
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useContext, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { signupSchema } from "./validation/validation";
+import { Card } from "primereact/card";
+import { InputText } from "primereact/inputtext";
+import { Button } from "primereact/button";
+import { Toast } from "primereact/toast";
+import { Tooltip } from "primereact/tooltip";
+import sharedStyles from "./SharedStyles.module.css";
+import { UserContext } from "../context";
 
 type SignupFormData = z.infer<typeof signupSchema>;
 
 const SignUpUser = () => {
+  const userContext = useContext(UserContext);
+
+  if (userContext === undefined) {
+    console.log("UserContext not available.");
+    return null;
+  }
+
+  const { setIsSignupSuccess } = userContext;
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<SignupFormData>({ resolver: zodResolver(signupSchema) });
-  
-  const [error, setError] = useState("");
+
   const navigate = useNavigate();
+
+  const toast = useRef<Toast>(null);
 
   const onSubmit = (data: SignupFormData) => {
     const newUser = data;
@@ -24,90 +41,167 @@ const SignUpUser = () => {
       .post("http://localhost:3000/user/", newUser)
       .then((res) => {
         console.log(res.data);
+        setIsSignupSuccess(true);
         navigate("/");
       })
       .catch((err) => {
-        setError(err.response.data.message);
+        console.log(err);
+
+        if (err.message === "Network Error") {
+          // setError("Cannot connect to the server. Please try again later.");
+          if (toast.current) {
+            toast.current.show({
+              severity: "error",
+              summary: "Error",
+              detail: "Cannot connect to the server. Please try again later.",
+              life: 3000,
+            });
+          }
+        } else if (err.response) {
+          if (toast.current) {
+            toast.current.show({
+              severity: "error",
+              summary: "Error",
+              detail: err.response.data.message,
+              life: 3000,
+            });
+          }
+        } else {
+          // setError("Login Failed");
+          if (toast.current) {
+            toast.current.show({
+              severity: "error",
+              summary: "Error",
+              detail: "Sign up Failed",
+              life: 3000,
+            });
+          }
+        }
       });
   };
 
+  const cardTitle = <div className={sharedStyles.cardTitle}>Sign up</div>;
+
   return (
     <>
-      <div className="bg-dark vh-100 d-flex justify-content-center align-items-center">
-        <div className="shadow-sm bg-light bg-gradient p-3 w-25 rounded">
-          {error && <p className="text-danger">{error}</p>}
+      <Toast ref={toast} />
+      <div
+        className={`h-screen flex justify-content-center align-items-center ${sharedStyles.container}`}
+      >
+        <Card
+          title={cardTitle}
+          className={`shadow-3 bg-white p-3 ${sharedStyles.cardContainer}`}
+        >
+          {/* {error && <p className="text-danger">{error}</p>} */}
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="mb-3">
-              <label htmlFor="firstName" className="form-label">
-                <strong>First Name</strong>
+            <div className="flex flex-column mb-2">
+              <label
+                htmlFor="firstName"
+                className={`mb-1 ${sharedStyles.formLabel}`}
+              >
+                First Name
               </label>
-              <input
+              <InputText
                 {...register("firstName")}
                 id="firstName"
-                type="text"
-                className="form-control"
                 placeholder="Enter your first name"
+                className={`${errors.firstName && "p-invalid"} ${
+                  sharedStyles.formInput
+                }`}
               />
               {errors.firstName && (
-                <p className="text-danger">{errors.firstName.message}</p>
+                <p className={`mt-1 mb-0 ml-2 ${sharedStyles.errorMessage}`}>
+                  {errors.firstName.message}
+                </p>
               )}
             </div>
-            <div className="mb-3">
-              <label htmlFor="lastName" className="form-label">
-                <strong>Last Name</strong>
+            <div className="flex flex-column mb-2">
+              <label
+                htmlFor="lastName"
+                className={`mb-1 ${sharedStyles.formLabel}`}
+              >
+                Last Name
               </label>
-              <input
+              <InputText
                 {...register("lastName")}
                 id="lastName"
-                type="text"
-                className="form-control"
-                placeholder="Enter your lastName"
+                placeholder="Enter your last name"
+                className={`${errors.lastName && "p-invalid"} ${
+                  sharedStyles.formInput
+                }`}
               />
               {errors.lastName && (
-                <p className="text-danger">{errors.lastName.message}</p>
+                <p className={`mt-1 mb-0 ml-2 ${sharedStyles.errorMessage}`}>
+                  {errors.lastName.message}
+                </p>
               )}
             </div>
-            <div className="mb-3">
-              <label htmlFor="email" className="form-label">
-                <strong>Email</strong>
+            <div className="flex flex-column mb-2">
+              <label
+                htmlFor="email"
+                className={`mb-1 ${sharedStyles.formLabel}`}
+              >
+                Email
               </label>
-              <input
+              <InputText
                 {...register("email")}
                 id="email"
-                type="text"
-                className="form-control"
                 placeholder="Enter your email"
+                className={`${errors.email && "p-invalid"} ${
+                  sharedStyles.formInput
+                }`}
               />
               {errors.email && (
-                <p className="text-danger">{errors.email.message}</p>
+                <p className={`mt-1 mb-0 ml-2 ${sharedStyles.errorMessage}`}>
+                  {errors.email.message}
+                </p>
               )}
             </div>
-            <div className="mb-3">
-              <label htmlFor="password" className="form-label">
-                <strong>Password</strong>
+            <div className="flex flex-column mb-2">
+              <label
+                htmlFor="password"
+                className={`mb-1 ${sharedStyles.formLabel}`}
+              >
+                Password&nbsp;
+                <i
+                  className={`pi pi-info-circle ${sharedStyles.toolTipFont}`}
+                  data-pr-tooltip="Password must be at least 8 characters long"
+                  data-pr-position="right"
+                />
+                <Tooltip target=".pi-info-circle" />
               </label>
-              <input
+              <InputText
                 {...register("password")}
                 id="password"
                 type="password"
-                className="form-control"
                 placeholder="Enter your password"
+                className={`${errors.password && "p-invalid"} ${
+                  sharedStyles.formInput
+                }`}
               />
               {errors.password && (
-                <p className="text-danger">{errors.password.message}</p>
+                <p className={`mt-1 mb-0 ml-2 ${sharedStyles.errorMessage}`}>
+                  {errors.password.message}
+                </p>
               )}
             </div>
-            <button type="submit" className="btn btn-success w-100 mb-1">
-              Submit
-            </button>
+            <Button
+              label="Sign up"
+              type="submit"
+              className={`bg-bluegray-800 hover:bg-bluegray-900 mt-3 mb-1 w-full ${sharedStyles.button}`}
+            />
           </form>
-          <button
-            className="btn btn-outline-primary w-100"
-            onClick={() => navigate("/")}
-          >
-            Login
-          </button>
-        </div>
+          <div className={`mt-2 ${sharedStyles.Link}`}>
+            Already have an account?&nbsp;
+            <Button
+              link
+              onClick={() => navigate("/")}
+              className={`p-0 text-blue-500 hover:text-blue-700 ${sharedStyles.Link}`}
+            >
+              Log in
+            </Button>
+          </div>
+        </Card>
       </div>
     </>
   );

@@ -51,3 +51,8 @@
   font-size: 14px;
   font-weight: 400;
 }
+
+/* Tooltip font size */
+.toolTipFont {
+  font-size: 14px;
+}

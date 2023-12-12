@@ -142,9 +142,9 @@ const SignUpUser = () => {
                 htmlFor="password"
                 className={`mb-1 ${sharedStyles.formLabel}`}
               >
-                Password{" "}
+                Password&nbsp;
                 <i
-                  className="pi pi-info-circle"
+                  className={`pi pi-info-circle ${sharedStyles.toolTipFont}`}
                   data-pr-tooltip="Password must be at least 8 characters long"
                   data-pr-position="right"
                 />

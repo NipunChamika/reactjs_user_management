@@ -31,7 +31,3 @@
 .updateDialog {
   border-radius: 20px;
 }
-
-.customDialog .p-dialog {
-  border-radius: 20px !important;
-}

@@ -1,17 +1,20 @@
 import axios from "axios";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context";
 import { z } from "zod";
 import { updateUserSchema } from "./validation/validation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import sharedStyles from "./SharedStyles.module.css";
 import { Card } from "primereact/card";
-import UserProfile from "../assets/profile.png";
-import styles from "./Profile.module.css";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
+import { InputText } from "primereact/inputtext";
+import { Toast } from "primereact/toast";
+import UserProfile from "../assets/profile.png";
+import sharedStyles from "./SharedStyles.module.css";
+import styles from "./Profile.module.css";
+import { Tooltip } from "primereact/tooltip";
 
 interface Props {}
 
@@ -35,7 +38,6 @@ const Profile = ({}: Props) => {
     setUser,
     user,
     setError,
-    error,
     setIsLoggedIn,
     setRefreshExpiredError,
   } = userContext;
@@ -104,13 +106,15 @@ const Profile = ({}: Props) => {
 
   const [updateUser, setUpdateUser] = useState(false);
 
-  const [updateError, setUpdateError] = useState("");
+  // const [updateError, setUpdateError] = useState("");
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<UpdateFormData>({ resolver: zodResolver(updateUserSchema) });
+
+  const toast = useRef<Toast>(null);
 
   const onSubmit = (data: UpdateFormData) => {
     console.log(data);
@@ -122,7 +126,17 @@ const Profile = ({}: Props) => {
     );
 
     if (Object.keys(updatedData).length === 0) {
-      setUpdateError("Please fill in at least one field to update.");
+      // setUpdateError("Please fill in at least one field to update.");
+
+      if (toast.current) {
+        toast.current.show({
+          severity: "info",
+          summary: "Info",
+          detail: "Please fill in at least one field to update.",
+          life: 3000,
+        });
+      }
+
       return;
     }
 
@@ -132,16 +146,49 @@ const Profile = ({}: Props) => {
         setUser(res.data.user);
         setShouldRefetch(true);
         setUpdateUser(false);
+
+        if (toast.current) {
+          toast.current.show({
+            severity: "success",
+            summary: "Success",
+            detail: "User details updated successfully",
+            life: 3000,
+          });
+        }
       })
       .catch((err) => {
         console.log(err);
 
         if (err.message === "Network Error") {
-          setError(err.message);
+          // setError(err.message);
+          if (toast.current) {
+            toast.current.show({
+              severity: "error",
+              summary: "Error",
+              detail: "Cannot connect to the server. Please try again later.",
+              life: 3000,
+            });
+          }
         } else if (err.response) {
-          setError(err.response.data.message);
+          // setError(err.response.data.message);
+          if (toast.current) {
+            toast.current.show({
+              severity: "error",
+              summary: "Error",
+              detail: err.response.data.message,
+              life: 3000,
+            });
+          }
         } else {
-          setError("Something went wrong");
+          // setError("Something went wrong");
+          if (toast.current) {
+            toast.current.show({
+              severity: "error",
+              summary: "Error",
+              detail: "Something went wrong",
+              life: 3000,
+            });
+          }
         }
       });
   };
@@ -170,28 +217,19 @@ const Profile = ({}: Props) => {
       });
   };
 
-  const cardTitle = (
-    <div className={sharedStyles.cardTitle}>{`Welcome ${user.firstName}`}</div>
-  );
-
   return (
     <>
+      <Toast ref={toast} />
       <div
         className={`h-screen flex justify-content-center align-items-center ${sharedStyles.container}`}
       >
-        <Card
-          // title={cardTitle}
-          className={`shadow-3 bg-white p-3 ${sharedStyles.cardContainer}`}
-        >
-          {/* ====================================== */}
-
+        <Card className={`shadow-3 bg-white p-3 ${sharedStyles.cardContainer}`}>
           <div className="flex flex-row">
             <div className="flex align-items-center justify-content-center">
               <img
                 src={UserProfile}
                 alt="Profile"
                 className={styles.profileImageWrapper}
-                // style={{ maxWidth: "125px", marginRight: "26px" }}
               />
             </div>
             <div className="flex align-items-center justify-content-center">
@@ -199,11 +237,14 @@ const Profile = ({}: Props) => {
                 <div
                   className={`flex align-items-center justify-content-start ${sharedStyles.cardTitle}`}
                 >
-                  {`Welcome ${user.firstName}!`}
+                  {`Welcome ${user?.firstName}!`}
                 </div>
                 <div className="flex align-items-center justify-content-start">
-                  <div className={`mt-1 ${styles.profileTextWrapper}`}>
-                    Please enter your login details below
+                  <div
+                    className={`mt-1 max-w-17rem ${styles.profileTextWrapper}`}
+                    style={{ whiteSpace: "normal" }}
+                  >
+                    Take a look at your profile details below
                   </div>
                 </div>
                 <div
@@ -227,35 +268,15 @@ const Profile = ({}: Props) => {
             </div>
           </div>
 
-          {/* <div className="flex flex-row">
-            <div className="flex align-items-baseline">
-              <div className={`${styles.profileDetailsHeader}`}>Name</div>
-              <div className={`mx-3 ${styles.profileDetailsHeader}`}>:</div>
-              <div className={`${styles.profileDetailsResult}`}>
-                {user?.firstName + " " + user?.lastName}
-              </div>
-            </div>
-          </div>
-
-          <div className="flex flex-row">
-            <div className="flex align-items-baseline">
-              <div className={`${styles.profileDetailsHeader}`}>Email</div>
-              <div className={`mx-3 ${styles.profileDetailsHeader}`}>:</div>
-              <div className={`${styles.profileDetailsResult}`}>
-                {user?.email}
-              </div>
-            </div>
-          </div> */}
-
           {/* <div className="flex flex-row"> */}
           <div className="grid mb-1">
-            <div className="col-2 flex align-items-baseline">
+            <div className="col-2 flex align-items-center">
               <div className={`${styles.profileDetailsHeader}`}>Name</div>
             </div>
-            <div className="col-1 flex align-items-baseline">
+            <div className="col-1 flex align-items-center">
               <div className={`${styles.profileDetailsHeader}`}>:</div>
             </div>
-            <div className="col-9 flex align-items-baseline">
+            <div className="col-9 flex align-items-center">
               <div className={`${styles.profileDetailsResult}`}>
                 {user?.firstName + " " + user?.lastName}
               </div>
@@ -263,26 +284,18 @@ const Profile = ({}: Props) => {
           </div>
 
           <div className="grid mb-5">
-            <div className="col-2 flex align-items-baseline">
+            <div className="col-2 flex align-items-center">
               <div className={styles.profileDetailsHeader}>Email</div>
             </div>
-            <div className="col-1 flex align-items-baseline">
+            <div className="col-1 flex align-items-center">
               <div className={styles.profileDetailsHeader}>:</div>
             </div>
-            <div className="col-9 flex align-items-baseline">
+            <div className="col-9 flex align-items-center">
               <div className={styles.profileDetailsResult}>{user?.email}</div>
             </div>
           </div>
           {/* </div> */}
 
-          {/* ======================================================== */}
-          {/* {error && <p className="text-danger">{error}</p>} */}
-          {/* <h1 className="text-center mb-3">{`Welcome Back, ${user?.firstName}`}</h1> */}
-          {/* <h5>Profile Details</h5>
-          <div>
-            <p>Name: {user?.firstName + " " + user?.lastName}</p>
-            <p>Email: {user?.email}</p>
-          </div> */}
           <div className="flex align-items-center justify-content-between">
             <Button
               label="Update"
@@ -295,17 +308,6 @@ const Profile = ({}: Props) => {
               }}
             />
 
-            {/* <Button
-              label="Update"
-              severity="secondary"
-              outlined
-              className={`border-bluegray-700 hover:border-bluegray-900 w-10rem text-bluegray-700 hover:text-bluegray-900 ${styles.profileButton}`}
-              onClick={() => {
-                setUpdateUser(true);
-                setShouldRefetch(false);
-              }}
-            /> */}
-
             <Button
               label="Refresh Token"
               className={`bg-bluegray-800 hover:bg-bluegray-900 border-bluegray-800 hover:border-bluegray-900 w-10rem ${styles.profileButton}`}
@@ -317,186 +319,149 @@ const Profile = ({}: Props) => {
 
           <Dialog
             header={
-              <div className="flex justify-content-center align-items-center">
+              <div
+                className={`flex justify-content-center align-items-center mt-5 pl-4 ${sharedStyles.cardTitle}`}
+              >
                 Update Details
               </div>
             }
             visible={updateUser}
-            onHide={() => setUpdateUser(false)}
+            onHide={() => {
+              setUpdateUser(false);
+              // setUpdateError("");
+            }}
             style={{ width: "35vw" }}
-            // contentStyle={{ borderRadius: "20px" }}
+            contentStyle={{ padding: "0px 36px" }}
             // className={styles.customDialog}
             draggable={false}
             dismissableMask
+            footer={<div className="mb-5"></div>}
           >
-            <div className={`flex justify-content-center align-items-center`}>
+            <div className={`flex flex-column`}>
               {/* {updateError && <p className="text-danger">{updateError}</p>} */}
-              <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="mb-3">
-                  <label htmlFor="firstName" className="form-label">
-                    <strong>First Name</strong>
+              <form onSubmit={handleSubmit(onSubmit)} className="p-fluid">
+                <div className="field mb-3">
+                  <label
+                    htmlFor="firstName"
+                    className={`${sharedStyles.formLabel}`}
+                  >
+                    First Name
                   </label>
-                  <input
+                  <InputText
                     {...register("firstName")}
                     id="firstName"
                     type="text"
-                    className="form-control"
                     placeholder="Enter your first name"
+                    className={`${errors.firstName && "p-invalid"} ${
+                      sharedStyles.formInput
+                    }`}
                   />
                   {errors.firstName && (
-                    <p className="text-danger">{errors.firstName.message}</p>
+                    <p
+                      className={`mt-1 mb-0 ml-2 ${sharedStyles.errorMessage}`}
+                    >
+                      {errors.firstName.message}
+                    </p>
                   )}
                 </div>
-                <div className="mb-3">
-                  <label htmlFor="lastName" className="form-label">
-                    <strong>Last Name</strong>
+                <div className="field mb-3">
+                  <label
+                    htmlFor="lastName"
+                    className={`${sharedStyles.formLabel}`}
+                  >
+                    Last Name
                   </label>
-                  <input
+                  <InputText
                     {...register("lastName")}
                     id="lastName"
                     type="text"
-                    className="form-control"
                     placeholder="Enter your lastName"
+                    className={`${errors.lastName && "p-invalid"} ${
+                      sharedStyles.formInput
+                    }`}
                   />
                   {errors.lastName && (
-                    <p className="text-danger">{errors.lastName.message}</p>
+                    <p
+                      className={`mt-1 mb-0 ml-2 ${sharedStyles.errorMessage}`}
+                    >
+                      {errors.lastName.message}
+                    </p>
                   )}
                 </div>
-                <div className="mb-3">
-                  <label htmlFor="email" className="form-label">
-                    <strong>Email</strong>
+                <div className="field mb-3">
+                  <label
+                    htmlFor="email"
+                    className={`${sharedStyles.formLabel}`}
+                  >
+                    Email
                   </label>
-                  <input
+                  <InputText
                     {...register("email")}
                     id="email"
                     type="text"
-                    className="form-control"
                     placeholder="Enter your email"
+                    className={`${errors.email && "p-invalid"} ${
+                      sharedStyles.formInput
+                    }`}
                   />
                   {errors.email && (
-                    <p className="text-danger">{errors.email.message}</p>
+                    <p
+                      className={`mt-1 mb-0 ml-2 ${sharedStyles.errorMessage}`}
+                    >
+                      {errors.email.message}
+                    </p>
                   )}
                 </div>
-                <div className="mb-3">
-                  <label htmlFor="password" className="form-label">
-                    <strong>Password</strong>
+                <div className="field mb-3">
+                  <label
+                    htmlFor="password"
+                    className={`${sharedStyles.formLabel}`}
+                  >
+                    Password&nbsp;
+                    <i
+                      className={`pi pi-info-circle ${sharedStyles.toolTipFont}`}
+                      data-pr-tooltip="Password must be at least 8 characters long"
+                      data-pr-position="right"
+                    />
+                    <Tooltip target=".pi-info-circle" />
                   </label>
-                  <input
+                  <InputText
                     {...register("password")}
                     id="password"
                     type="password"
-                    className="form-control"
                     placeholder="Enter your password"
+                    className={`${errors.password && "p-invalid"} ${
+                      sharedStyles.formInput
+                    }`}
                   />
                   {errors.password && (
-                    <p className="text-danger">{errors.password.message}</p>
+                    <p
+                      className={`mt-1 mb-0 ml-2 ${sharedStyles.errorMessage}`}
+                    >
+                      {errors.password.message}
+                    </p>
                   )}
                 </div>
-                <button
+                <Button
+                  label="Submit"
                   type="submit"
-                  className="btn btn-outline-primary mb-1 me-2"
-                >
-                  Submit
-                </button>
-                <button
-                  className="btn btn-outline-secondary"
+                  className={`bg-bluegray-800 hover:bg-bluegray-900 border-bluegray-800 hover:border-bluegray-900 w-full mt-3 py-3 ${styles.profileButton}`}
+                />
+              </form>
+              <div className="flex justify-content-center mt-2">
+                <Button
+                  label="Cancel"
+                  outlined
+                  severity="secondary"
+                  className={`w-full py-3 ${styles.profileButton}`}
                   onClick={() => {
                     setUpdateUser(false);
-                    setUpdateError("");
+                    // setUpdateError("");
                   }}
-                >
-                  Cancel
-                </button>
-              </form>
+                />
+              </div>
             </div>
           </Dialog>
-
-          {/* =========================================================================== */}
-
-          {/* {updateUser && (
-            <div>
-              <br />
-              {updateError && <p className="text-danger">{updateError}</p>}
-              <h1 className="text-center mb-3">User Update</h1>
-              <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="mb-3">
-                  <label htmlFor="firstName" className="form-label">
-                    <strong>First Name</strong>
-                  </label>
-                  <input
-                    {...register("firstName")}
-                    id="firstName"
-                    type="text"
-                    className="form-control"
-                    placeholder="Enter your first name"
-                  />
-                  {errors.firstName && (
-                    <p className="text-danger">{errors.firstName.message}</p>
-                  )}
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="lastName" className="form-label">
-                    <strong>Last Name</strong>
-                  </label>
-                  <input
-                    {...register("lastName")}
-                    id="lastName"
-                    type="text"
-                    className="form-control"
-                    placeholder="Enter your lastName"
-                  />
-                  {errors.lastName && (
-                    <p className="text-danger">{errors.lastName.message}</p>
-                  )}
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="email" className="form-label">
-                    <strong>Email</strong>
-                  </label>
-                  <input
-                    {...register("email")}
-                    id="email"
-                    type="text"
-                    className="form-control"
-                    placeholder="Enter your email"
-                  />
-                  {errors.email && (
-                    <p className="text-danger">{errors.email.message}</p>
-                  )}
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="password" className="form-label">
-                    <strong>Password</strong>
-                  </label>
-                  <input
-                    {...register("password")}
-                    id="password"
-                    type="password"
-                    className="form-control"
-                    placeholder="Enter your password"
-                  />
-                  {errors.password && (
-                    <p className="text-danger">{errors.password.message}</p>
-                  )}
-                </div>
-                <button
-                  type="submit"
-                  className="btn btn-outline-primary mb-1 me-2"
-                >
-                  Submit
-                </button>
-                <button
-                  className="btn btn-outline-secondary"
-                  onClick={() => {
-                    setUpdateUser(false);
-                    setUpdateError("");
-                  }}
-                >
-                  Cancel
-                </button>
-              </form>
-            </div>
-          )} */}
         </Card>
       </div>
     </>

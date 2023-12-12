@@ -46,6 +46,15 @@ const SignUpUser = () => {
               life: 3000,
             });
           }
+        } else if (err.response) {
+          if (toast.current) {
+            toast.current.show({
+              severity: "error",
+              summary: "Error",
+              detail: err.response.data.message,
+              life: 3000,
+            });
+          }
         } else {
           // setError("Login Failed");
           if (toast.current) {

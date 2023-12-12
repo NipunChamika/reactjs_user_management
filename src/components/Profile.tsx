@@ -11,10 +11,10 @@ import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
+import { Tooltip } from "primereact/tooltip";
 import UserProfile from "../assets/profile.png";
 import sharedStyles from "./SharedStyles.module.css";
 import styles from "./Profile.module.css";
-import { Tooltip } from "primereact/tooltip";
 
 interface Props {}
 

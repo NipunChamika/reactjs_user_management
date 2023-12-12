@@ -28,6 +28,7 @@ function App() {
   const [email, setEmail] = useState({ email: "" });
   const [sendOtp, setSendOtp] = useState(false);
   const [passwordResetSuccess, setPasswordResetSuccess] = useState(false);
+  const [isSignupSuccess, setIsSignupSuccess] = useState(false);
 
   const router = createBrowserRouter([
     { path: "/", element: <LoginUser /> },
@@ -57,6 +58,8 @@ function App() {
           setSendOtp,
           passwordResetSuccess,
           setPasswordResetSuccess,
+          isSignupSuccess,
+          setIsSignupSuccess,
         }}
       >
         <RouterProvider router={router} />

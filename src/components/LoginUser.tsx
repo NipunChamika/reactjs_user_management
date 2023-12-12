@@ -37,6 +37,8 @@ const LoginUser = ({}: Props) => {
     setRefreshExpiredError,
     passwordResetSuccess,
     setPasswordResetSuccess,
+    isSignupSuccess,
+    setIsSignupSuccess,
   } = userContext;
 
   const navigate = useNavigate();
@@ -76,7 +78,21 @@ const LoginUser = ({}: Props) => {
       });
     }
     setPasswordResetSuccess(false);
-  });
+  }, [passwordResetSuccess]);
+
+  useEffect(() => {
+    if (isSignupSuccess && toast.current) {
+      toast.current.clear();
+
+      toast.current.show({
+        severity: "success",
+        summary: "Success",
+        detail: "User Signup Successful",
+        life: 3000,
+      });
+    }
+    setIsSignupSuccess(false);
+  }, [isSignupSuccess]);
 
   const onSubmit = (data: LoginFormData) => {
     axios

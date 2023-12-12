@@ -22,6 +22,8 @@ interface UserContextProps {
   setSendOtp: (sendOtp: boolean) => void;
   passwordResetSuccess: boolean;
   setPasswordResetSuccess: (passwordResetSuccess: boolean) => void;
+  isSignupSuccess: boolean;
+  setIsSignupSuccess: (isSignupSuccess: boolean) => void;
 }
 
 export const UserContext = createContext<UserContextProps | undefined>(

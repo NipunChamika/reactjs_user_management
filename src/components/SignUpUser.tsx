@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRef } from "react";
+import { useContext, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { signupSchema } from "./validation/validation";
@@ -11,10 +11,20 @@ import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { Tooltip } from "primereact/tooltip";
 import sharedStyles from "./SharedStyles.module.css";
+import { UserContext } from "../context";
 
 type SignupFormData = z.infer<typeof signupSchema>;
 
 const SignUpUser = () => {
+  const userContext = useContext(UserContext);
+
+  if (userContext === undefined) {
+    console.log("UserContext not available.");
+    return null;
+  }
+
+  const { setIsSignupSuccess } = userContext;
+
   const {
     register,
     handleSubmit,
@@ -31,6 +41,7 @@ const SignUpUser = () => {
       .post("http://localhost:3000/user/", newUser)
       .then((res) => {
         console.log(res.data);
+        setIsSignupSuccess(true);
         navigate("/");
       })
       .catch((err) => {

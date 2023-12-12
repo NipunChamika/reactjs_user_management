@@ -65,8 +65,8 @@ const PasswordResetPage = () => {
       toast.current.clear();
 
       toast.current.show({
-        severity: "success",
-        summary: "Success",
+        severity: "info",
+        summary: "Info",
         detail: `We have sent a code to ${email.email}`,
         life: 3000,
       });
@@ -117,8 +117,8 @@ const PasswordResetPage = () => {
         // setResendSuccess("A new OTP has been sent to your email");
         if (toast.current) {
           toast.current.show({
-            severity: "success",
-            summary: "Success",
+            severity: "info",
+            summary: "Info",
             detail: "A new OTP has been sent to your email",
             life: 3000,
           });

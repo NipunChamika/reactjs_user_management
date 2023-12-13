@@ -60,9 +60,11 @@ export const updateUserSchema = z
   })
   .refine(
     (data) => {
+      // If password is filled, then confirmPassword must also be filled
       if (data.password && data.password.length > 0) {
         return data.confirmPassword && data.confirmPassword.length > 0;
       }
+      // If password is not filled, it's okay for confirmPassword to be empty
       return true;
     },
     {

@@ -11,16 +11,24 @@ export const loginSchema = z.object({
     .min(8, { message: "Password must be at least 8 characters long" }),
 });
 
-export const signupSchema = loginSchema.extend({
-  firstName: z
-    .string()
-    .min(1, { message: "First name is required" })
-    .min(2, { message: "First name must be at least 2 characters long" }),
-  lastName: z
-    .string()
-    .min(1, { message: "Last name is required" })
-    .min(2, { message: "Last name must be at least 2 characters long" }),
-});
+export const signupSchema = loginSchema
+  .extend({
+    firstName: z
+      .string()
+      .min(1, { message: "First name is required" })
+      .min(2, { message: "First name must be at least 2 characters long" }),
+    lastName: z
+      .string()
+      .min(1, { message: "Last name is required" })
+      .min(2, { message: "Last name must be at least 2 characters long" }),
+    confirmPassword: z
+      .string()
+      .min(1, { message: "Confirm password is required" }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
 export const updateUserSchema = z.object({
   firstName: z

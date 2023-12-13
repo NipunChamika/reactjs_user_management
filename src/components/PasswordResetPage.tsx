@@ -270,6 +270,28 @@ const PasswordResetPage = () => {
                   </p>
                 )}
               </div>
+              <div className="flex flex-column mb-2">
+                <label
+                  htmlFor="confirmNewPassword"
+                  className={`mb-1 ${sharedStyles.formLabel}`}
+                >
+                  Confirm New Password
+                </label>
+                <InputText
+                  {...register("confirmNewPassword")}
+                  id="confirmNewPassword"
+                  type="password"
+                  placeholder="Confirm your new password"
+                  className={`${errors.confirmNewPassword && "p-invalid"} ${
+                    sharedStyles.formInput
+                  }`}
+                />
+                {errors.confirmNewPassword && (
+                  <p className={`mt-1 mb-0 ml-2 ${sharedStyles.errorMessage}`}>
+                    {errors.confirmNewPassword.message}
+                  </p>
+                )}
+              </div>
               <Button
                 label="Reset Password"
                 type="submit"

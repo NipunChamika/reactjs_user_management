@@ -439,6 +439,30 @@ const Profile = ({}: Props) => {
                     </p>
                   )}
                 </div>
+                <div className="field mb-3">
+                  <label
+                    htmlFor="confirmPassword"
+                    className={`${sharedStyles.formLabel}`}
+                  >
+                    Confirm Password
+                  </label>
+                  <InputText
+                    {...register("confirmPassword")}
+                    id="confirmPassword"
+                    type="password"
+                    placeholder="Confirm your password"
+                    className={`${errors.confirmPassword && "p-invalid"} ${
+                      sharedStyles.formInput
+                    }`}
+                  />
+                  {errors.confirmPassword && (
+                    <p
+                      className={`mt-1 mb-0 ml-2 ${sharedStyles.errorMessage}`}
+                    >
+                      {errors.confirmPassword.message}
+                    </p>
+                  )}
+                </div>
                 <Button
                   label="Submit"
                   type="submit"

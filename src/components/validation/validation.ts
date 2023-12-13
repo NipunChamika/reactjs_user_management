@@ -30,32 +30,50 @@ export const signupSchema = loginSchema
     path: ["confirmPassword"],
   });
 
-export const updateUserSchema = z.object({
-  firstName: z
-    .string()
-    .optional()
-    .refine((val) => !val || val.length >= 2, {
-      message: "First name must be at least 2 characters long",
-    }),
-  lastName: z
-    .string()
-    .optional()
-    .refine((val) => !val || val.length >= 2, {
-      message: "Last name must be at least 2 characters long",
-    }),
-  email: z
-    .string()
-    .optional()
-    .refine((val) => !val || z.string().email().safeParse(val).success, {
-      message: "Invalid email address",
-    }),
-  password: z
-    .string()
-    .optional()
-    .refine((val) => !val || val.length >= 8, {
-      message: "Password must be at least 8 characters long",
-    }),
-});
+export const updateUserSchema = z
+  .object({
+    firstName: z
+      .string()
+      .optional()
+      .refine((val) => !val || val.length >= 2, {
+        message: "First name must be at least 2 characters long",
+      }),
+    lastName: z
+      .string()
+      .optional()
+      .refine((val) => !val || val.length >= 2, {
+        message: "Last name must be at least 2 characters long",
+      }),
+    email: z
+      .string()
+      .optional()
+      .refine((val) => !val || z.string().email().safeParse(val).success, {
+        message: "Invalid email address",
+      }),
+    password: z
+      .string()
+      .optional()
+      .refine((val) => !val || val.length >= 8, {
+        message: "Password must be at least 8 characters long",
+      }),
+    confirmPassword: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.password && data.password.length > 0) {
+        return data.confirmPassword && data.confirmPassword.length > 0;
+      }
+      return true;
+    },
+    {
+      message: "Confirm password is required",
+      path: ["confirmPassword"],
+    }
+  )
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
 export const emailSchema = z.object({
   email: z

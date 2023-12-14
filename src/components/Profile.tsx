@@ -327,9 +327,8 @@ const Profile = ({}: Props) => {
               setUpdateUser(false);
               // setUpdateError("");
             }}
-            style={{ width: "35vw" }}
+            className={`${styles.updateDialog} overflow-hidden`}
             contentStyle={{ padding: "0px 36px" }}
-            // className={styles.customDialog}
             draggable={false}
             dismissableMask
             footer={<div className="mb-5"></div>}

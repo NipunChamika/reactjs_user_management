@@ -29,5 +29,6 @@
 }
 
 .updateDialog {
+  width: 35vw;
   border-radius: 20px;
 }
